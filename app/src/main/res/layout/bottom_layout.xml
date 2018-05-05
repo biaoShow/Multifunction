@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#DDDDDD"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <com.example.biao.multifunction.definedview.MyView
+            android:id="@+id/mv_music"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="4dp"
+            custom:imgHeight="30dp"
+            custom:img_and_text_distance="5dp"
+            custom:mysrc="@mipmap/unselectmusci"
+            custom:text="音乐"
+            custom:textColor="#888888"
+            custom:textSize="12sp" />
+
+        <com.example.biao.multifunction.definedview.MyView
+            android:id="@+id/mv_video"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="4dp"
+            custom:imgHeight="30dp"
+            custom:img_and_text_distance="5dp"
+            custom:mysrc="@mipmap/unselectmusci"
+            custom:text="视频"
+            custom:textColor="#888888"
+            custom:textSize="12sp" />
+
+        <com.example.biao.multifunction.definedview.MyView
+            android:id="@+id/mv_navigation"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="4dp"
+            custom:imgHeight="30dp"
+            custom:img_and_text_distance="5dp"
+            custom:mysrc="@mipmap/unselectmusci"
+            custom:text="导航"
+            custom:textColor="#888888"
+            custom:textSize="12sp" />
+
+        <com.example.biao.multifunction.definedview.MyView
+            android:id="@+id/mv_weather"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="4dp"
+            custom:imgHeight="30dp"
+            custom:img_and_text_distance="5dp"
+            custom:mysrc="@mipmap/unselectmusci"
+            custom:text="天气"
+            custom:textColor="#888888"
+            custom:textSize="12sp" />
+    </LinearLayout>
+
+</LinearLayout>

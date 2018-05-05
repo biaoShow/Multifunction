@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#1E90FF">
+
+
+    <com.example.biao.multifunction.definedview.CircleImageView
+        android:id="@+id/civ_portrait"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        custom:radius="20dp"
+        custom:src="@mipmap/portrait"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:text="音乐" />
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/search" />
+
+</RelativeLayout>

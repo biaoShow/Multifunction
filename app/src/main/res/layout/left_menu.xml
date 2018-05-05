@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@mipmap/left_memu_bg">
+
+        <com.example.biao.multifunction.definedview.CircleImageView
+            android:id="@+id/left_portrait"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="5dp"
+            custom:radius="30dp"
+            custom:src="@mipmap/portrait"/>
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/left_portrait"
+            android:textSize="20sp"
+            android:textColor="#555555"
+            android:text="会员名称"/>
+
+    </RelativeLayout>
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/left_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#888888"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="30dp">
+
+
+        <ImageView
+            android:id="@+id/iv_set"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/set"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/iv_set"
+            android:layout_marginLeft="10dp"
+            android:text="设置"/>
+
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_toLeftOf="@+id/tv_back"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/back"/>
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_alignParentRight="true"
+            android:text="退出"/>
+    </RelativeLayout>
+    
+
+
+
+</LinearLayout>

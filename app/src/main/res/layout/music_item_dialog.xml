@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="歌曲名称："/>
+        <TextView
+            android:id="@+id/tv_dialog_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="歌名*********"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="演唱歌手："/>
+        <TextView
+            android:id="@+id/tv_dialog_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="歌手*********"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="播放时长："/>
+        <TextView
+            android:id="@+id/tv_dialog_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="时间*********"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="文件大小："/>
+        <TextView
+            android:id="@+id/tv_dialog_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="大小*********"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="文件路径："/>
+        <TextView
+            android:id="@+id/tv_dialog_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:textSize="15sp"
+            android:textColor="#333333"
+            android:text="路径*********"/>
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_dialog_close"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:textColor="#4876FF"
+        android:textSize="20sp"
+        android:text="确认"/>
+
+</LinearLayout>

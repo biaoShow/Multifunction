@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#87CEFF"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_lyrics_title"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#6495ED">
+
+        <ImageView
+            android:id="@+id/iv_lyrics_back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:src="@mipmap/lyrics_back" />
+
+        <TextView
+            android:id="@+id/tv_lyrics_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="25dp"
+            android:layout_toRightOf="@+id/iv_lyrics_back"
+            android:singleLine="true"
+            android:text="暂无歌曲"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_lyrics_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_lyrics_song"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_lyrics_back"
+            android:singleLine="true"
+            android:text="歌手名**"
+            android:textColor="#FFFFFF" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:text="暂无歌词"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#6495ED">
+
+        <TextView
+            android:id="@+id/tv_lyrics_alltime"
+            android:gravity="center"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="总时长"/>
+        <SeekBar
+            android:id="@+id/sb_lyrics"
+            android:layout_toRightOf="@+id/tv_left_itemtext"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+        <TextView
+            android:id="@+id/tv_lyrics_playtime"
+            android:gravity="center"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="放时长"/>
+
+        <ImageView
+            android:id="@+id/iv_lyrics_last"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/iv_lyrics_startandpause"
+            android:layout_marginRight="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/last" />
+
+        <ImageView
+            android:id="@+id/iv_lyrics_startandpause"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/start"/>
+
+        <ImageView
+            android:id="@+id/iv_lyrics_next"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/iv_lyrics_startandpause"
+            android:layout_marginLeft="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/next" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
