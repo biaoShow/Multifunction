@@ -1,6 +1,7 @@
 package com.example.biao.multifunction.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,9 +67,12 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)  //可写
                     != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MyApplication.getContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+                    Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(MyApplication.getContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
+                    PackageManager.PERMISSION_GRANTED) {
                 //申请ACCESS_FINE_LOCATION权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
             } else {
                 MusicUtils.getMusicData(MyApplication.getContext());
             }

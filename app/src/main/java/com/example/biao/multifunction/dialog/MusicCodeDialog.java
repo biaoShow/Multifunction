@@ -58,7 +58,7 @@ public class MusicCodeDialog extends Dialog{
 
     /**
      * 设置控件参数
-     * @param position
+     * @param position 点击的item （歌曲单list的编号）
      */
 
     private void setCodeItem(int position) {
@@ -66,6 +66,6 @@ public class MusicCodeDialog extends Dialog{
         tv_dialog_singer.setText(list.get(position).getSinger());
         tv_dialog_duration.setText(MusicUtils.formatTime(list.get(position).getDuration()));
         tv_dialog_size.setText(MusicUtils.formatSize(list.get(position).getSize()));
-        tv_dialog_path.setText(MusicUtils.fromatPath(list.get(position).getPath()));
+        tv_dialog_path.setText(MusicUtils.getFilePath(list.get(position).getPath()));
     }
 }

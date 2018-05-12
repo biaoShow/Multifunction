@@ -38,7 +38,6 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
     private View civ_music;
     private MusicService.MusicBinder musicBinder;//音乐播放service
     private Intent intent;
-    private MusicCodeDialog musicCodeDialog;
     //创建一个服务连接对象
     private ServiceConnection connection= new ServiceConnection() {
         @Override
@@ -122,7 +121,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
 
     /**
      * 显示dialog
-     * @param position
+     * @param position 歌单List下标
      */
     private void showDialog(int position){
         MusicCodeDialog selectDialog = new MusicCodeDialog(getActivity(),position);
@@ -134,4 +133,6 @@ public class MusicFragment extends Fragment implements View.OnClickListener{
         //设置dialog生效
         selectDialog.getWindow().setAttributes(p);
     }
+
+
 }
