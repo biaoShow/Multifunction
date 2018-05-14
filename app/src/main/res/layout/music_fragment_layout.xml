@@ -17,6 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         custom:radius="25dp"
-        custom:src="@mipmap/action_to_lyrics"/>
+        custom:src="@mipmap/action_to_lyrics" />
 
 </RelativeLayout>

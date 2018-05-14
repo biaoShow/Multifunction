@@ -18,7 +18,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
             android:src="@mipmap/lyrics_back"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:background="@drawable/lyrics_btn_color"/>
 
         <TextView
             android:id="@+id/tv_lyrics_song"
@@ -106,7 +107,8 @@
             android:layout_height="40dp"
             android:src="@mipmap/last"
             android:layout_toStartOf="@+id/iv_lyrics_startandpause"
-            android:layout_marginEnd="20dp" />
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/lyrics_btn_color"/>
 
         <ImageView
             android:id="@+id/iv_lyrics_startandpause"
@@ -125,7 +127,8 @@
             android:layout_height="40dp"
             android:src="@mipmap/next"
             android:layout_toEndOf="@+id/iv_lyrics_startandpause"
-            android:layout_marginStart="20dp" />
+            android:layout_marginStart="20dp"
+            android:background="@drawable/lyrics_btn_color"/>
 
     </RelativeLayout>
 

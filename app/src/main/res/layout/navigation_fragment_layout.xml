@@ -1,13 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="30sp"
-        android:text="这是定位导航功能"/>
+   <com.baidu.mapapi.map.MapView
+       android:id="@+id/mv_view"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:clickable="true">
 
+   </com.baidu.mapapi.map.MapView>
+
+   <LinearLayout
+       android:id="@+id/ll_navigation_pattern"
+       android:layout_alignParentRight="true"
+       android:layout_marginRight="10dp"
+       android:layout_marginTop="20dp"
+       android:layout_width="28dp"
+       android:gravity="center"
+       android:layout_height="wrap_content"
+       android:background="@drawable/navigation_bg_shape"
+       android:orientation="vertical">
+
+      <ImageView
+          android:id="@+id/iv_traffic"
+          android:layout_gravity="center"
+          android:layout_width="20dp"
+          android:layout_height="30dp"
+          android:src="@mipmap/traffic_off"/>
+      <View
+          android:layout_gravity="center"
+          android:layout_width="20dp"
+          android:layout_height="1dp"
+          android:background="#888888"
+          />
+      <ImageView
+          android:id="@+id/iv_three"
+          android:layout_width="25dp"
+          android:layout_height="25dp"
+          android:src="@mipmap/standard"/>
+      <View
+          android:layout_gravity="center"
+          android:layout_width="20dp"
+          android:layout_height="1dp"
+          android:background="#888888"
+          />
+      <ImageView
+          android:id="@+id/iv_satellite"
+          android:layout_width="25dp"
+          android:layout_height="25dp"
+          android:src="@mipmap/satellite"/>
+
+   </LinearLayout>
+
+   <LinearLayout
+       android:id="@+id/ll_navigation_overlay"
+       android:layout_below="@+id/ll_navigation_pattern"
+       android:layout_alignParentRight="true"
+       android:layout_marginRight="10dp"
+       android:layout_marginTop="10dp"
+       android:layout_width="28dp"
+       android:gravity="center"
+       android:layout_height="wrap_content"
+       android:background="@drawable/navigation_bg_shape"
+       android:orientation="vertical">
+
+       <TextView
+           android:id="@+id/tv_cate"
+           android:layout_width="match_parent"
+           android:layout_height="25dp"
+           android:gravity="center"
+           android:textSize="11sp"
+           android:text="美食"/>
+       <View
+           android:layout_gravity="center"
+           android:layout_width="20dp"
+           android:layout_height="1dp"
+           android:background="#888888"
+           />
+       <TextView
+           android:id="@+id/tv_hotel"
+           android:layout_width="match_parent"
+           android:layout_height="25dp"
+           android:gravity="center"
+           android:textSize="11sp"
+           android:text="酒店"/>
 </LinearLayout>
+
+   <ImageView
+       android:id="@+id/iv_commontocompass"
+       android:layout_width="30dp"
+       android:layout_height="30dp"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="80dp"
+       android:layout_marginLeft="20dp"
+       android:src="@mipmap/compass"
+       />
+
+   <ImageView
+       android:id="@+id/iv_location"
+       android:layout_width="30dp"
+       android:layout_height="30dp"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="40dp"
+       android:layout_marginLeft="20dp"
+       android:src="@mipmap/location"/>
+
+    <include
+        layout="@layout/overlay_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:clickable="true"
+    android:background="#FFFFFF">
+
+    <RelativeLayout
+        android:id="@+id/rl_imageandaddress"
+        android:layout_width="match_parent"
+        android:layout_height="166dp">
+
+        <ImageView
+            android:id="@+id/iv_overlay_image"
+            android:layout_width="match_parent"
+            android:layout_height="166dp"
+            android:src="@mipmap/overlay_one"/>
+        <TextView
+            android:id="@+id/tv_overlay_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:textColor="#FFFFFF"
+            android:text="广东省广州市番禺区大北路414号"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_overlay_name"
+        android:layout_below="@+id/rl_imageandaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:textColor="#555555"
+        android:text="全兴酒店"/>
+    <TextView
+        android:id="@+id/tv_distance"
+        android:layout_below="@+id/tv_overlay_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:text="距离2300米" />
+    <TextView
+        android:id="@+id/tv_overlay_love"
+        android:layout_below="@+id/rl_imageandaddress"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1024"/>
+
+
+    <ImageView
+        android:layout_toLeftOf="@+id/tv_overlay_love"
+        android:layout_below="@+id/rl_imageandaddress"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@mipmap/love"/>
+
+
+</RelativeLayout>

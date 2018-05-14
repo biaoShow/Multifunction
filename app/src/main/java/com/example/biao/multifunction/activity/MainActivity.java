@@ -27,6 +27,7 @@ import com.example.biao.multifunction.fragment.VideoFragment;
 import com.example.biao.multifunction.fragment.WeatherFragment;
 import com.example.biao.multifunction.util.MusicUtils;
 import com.example.biao.multifunction.util.MyApplication;
+import com.example.biao.multifunction.util.OnClickLeftRLItemListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import java.util.ArrayList;
@@ -158,11 +159,25 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         View view = mSlidingMenu.getMenu();//获取左拉菜单栏view对象
 
         tv_back = view.findViewById(R.id.tv_back);
+
+
         tv_back.setOnClickListener(this);
         left_recyclerview = view.findViewById(R.id.left_recyclerview);
         leftRecylerviewAdapter = new LeftRecylerviewAdapter(this,list);
         left_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         left_recyclerview.setAdapter(leftRecylerviewAdapter);
+
+        leftRecylerviewAdapter.setOnClickLeftRLItemListener(new OnClickLeftRLItemListener() {
+            @Override
+            public void onClickItem(int position) {
+                if(1<position && position<6){
+                    setMenuSelector(position-2);
+                    mSlidingMenu.toggle();
+                }else{
+                    Toast.makeText(MainActivity.this,"功能暂未实现",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
@@ -179,13 +194,13 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
             mv_music.setImageResource(R.mipmap.selectedmusic);
             tv_title.setText("音乐");
         } else if (index == 1) {
-            mv_video.setImageResource(R.mipmap.selectedmusic);
+            mv_video.setImageResource(R.mipmap.video_selected);
             tv_title.setText("视频");
         } else if (index == 2) {
-            mv_navigation.setImageResource(R.mipmap.selectedmusic);
+            mv_navigation.setImageResource(R.mipmap.navigation_selected);
             tv_title.setText("导航");
         } else if (index == 3) {
-            mv_weather.setImageResource(R.mipmap.selectedmusic);
+            mv_weather.setImageResource(R.mipmap.weather_selected);
             tv_title.setText("天气");
         }
         myViews.get(index).setSelected(true);
@@ -241,9 +256,9 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         mv_weather.setTextColor(0xff888888);
 
         mv_music.setImageResource(R.mipmap.unselectmusci);
-        mv_video.setImageResource(R.mipmap.unselectmusci);
-        mv_navigation.setImageResource(R.mipmap.unselectmusci);
-        mv_weather.setImageResource(R.mipmap.unselectmusci);
+        mv_video.setImageResource(R.mipmap.video_unselect);
+        mv_navigation.setImageResource(R.mipmap.navigation_unselect);
+        mv_weather.setImageResource(R.mipmap.weather_unselect);
     }
 
 
