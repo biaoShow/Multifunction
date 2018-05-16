@@ -3,6 +3,7 @@ package com.example.biao.multifunction.util;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -13,21 +14,21 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class WeatherHttpUtils{
 
-    private static void sendHttpRequest(final String address, final WeatehwrHttpCallbackListener listener){
+    public static void sendHttpRequest(final String address, final WeatehwrHttpCallbackListener listener){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                HttpsURLConnection connection = null;
+                HttpURLConnection connection = null;
                 try {
                     URL url = new URL(address);
-                    connection = (HttpsURLConnection) url.openConnection();
+                    connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
                     InputStream input = connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(input));
                     StringBuilder builder = new StringBuilder();
-                    String line = "";
+                    String line;
                     while ((line = reader.readLine())!=null){
                         builder.append(line);
                     }

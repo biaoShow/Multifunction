@@ -14,7 +14,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="5dp"
         custom:radius="20dp"
-        custom:src="@mipmap/portrait"/>
+        custom:src="@mipmap/portrait"
+        android:layout_marginStart="10dp" />
 
     <TextView
         android:id="@+id/tv_title"
@@ -24,14 +25,18 @@
         android:layout_marginTop="17dp"
         android:textSize="18sp"
         android:textColor="#FFFFFF"
-        android:text="音乐" />
+        android:text="@string/titel_text" />
 
     <ImageView
+        android:id="@+id/iv_weather_search"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:src="@mipmap/search" />
+        android:visibility="gone"
+        android:src="@mipmap/search"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp" />
 
 </RelativeLayout>

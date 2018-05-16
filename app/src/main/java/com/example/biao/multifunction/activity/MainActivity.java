@@ -1,7 +1,7 @@
 package com.example.biao.multifunction.activity;
 
 import android.Manifest;
-import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,10 +13,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.adapter.FragmentAdapter;
 import com.example.biao.multifunction.adapter.LeftRecylerviewAdapter;
@@ -25,6 +26,7 @@ import com.example.biao.multifunction.fragment.MusicFragment;
 import com.example.biao.multifunction.fragment.NavigationFragment;
 import com.example.biao.multifunction.fragment.VideoFragment;
 import com.example.biao.multifunction.fragment.WeatherFragment;
+import com.example.biao.multifunction.util.ActivityCollecter;
 import com.example.biao.multifunction.util.MusicUtils;
 import com.example.biao.multifunction.util.MyApplication;
 import com.example.biao.multifunction.util.OnClickLeftRLItemListener;
@@ -45,6 +47,8 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     private ArrayList<MyView> myViews = new ArrayList<>();//自定义MyView类型控件数组
     private MyView mv_music, mv_video, mv_navigation, mv_weather;
     private ViewPager viewPager;
+    private boolean isFirst=false;//判断是否第一次进入
+    private int i;//判断是否需要设置第一页
 
     //菜单栏对象和控件
     private RecyclerView left_recyclerview;
@@ -55,6 +59,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     //title 布局控件
     private TextView tv_title;
     private View civ_portrait;
+    private ImageView iv_weather_search;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -62,6 +67,9 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setBehindContentView(R.layout.left_menu);
+        ActivityCollecter.addActivity(this);
+        isFirst=true;
+        i=1;
 
 
         //android 6.0及以上权限申请
@@ -89,6 +97,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         //title_layout布局控件初始化
         tv_title = (TextView) findViewById(R.id.tv_title);
         civ_portrait = findViewById(R.id.civ_portrait);
+        iv_weather_search = (ImageView) findViewById(R.id.iv_weather_search);
 
         setList();//初始化泛型list数组
 
@@ -118,6 +127,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
 
         viewPager.setOnPageChangeListener(this);
         civ_portrait.setOnClickListener(this);
+        iv_weather_search.setOnClickListener(this);
     }
 
     @Override
@@ -136,17 +146,33 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         }
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(isFirst){
+            i = 1;
+            isFirst = false;
+        }else{
+           i=0;
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
-        //将viewPage添加到适配器显示
-        //放在此处，可避免首次进入应用出现空白列表
-        viewPager.setAdapter(fragmentAdapter);
-
+        Log.i("MainActivity","----------onResume----------");
         //默认选中第一个Fragment
-        setMenuSelector(0);
-        mv_music.setImageResource(R.mipmap.selectedmusic);
+        if(i==1){
+            //将viewPage添加到适配器显示
+            //放在此处，可避免首次进入应用出现空白列表
+            viewPager.setAdapter(fragmentAdapter);
+
+            setMenuSelector(0);
+            mv_music.setImageResource(R.mipmap.selectedmusic);
+            isFirst = false;
+        }
 
         //为控件设置监听事件
         mv_music.setOnClickListener(this);
@@ -180,6 +206,12 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollecter.removeActivity(this);
+    }
+
     /**
      * 选中指定的菜单项并显示对应的Fragment
      *
@@ -193,15 +225,19 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         if (index == 0) {
             mv_music.setImageResource(R.mipmap.selectedmusic);
             tv_title.setText("音乐");
+            iv_weather_search.setVisibility(View.GONE);
         } else if (index == 1) {
             mv_video.setImageResource(R.mipmap.video_selected);
             tv_title.setText("视频");
+            iv_weather_search.setVisibility(View.GONE);
         } else if (index == 2) {
             mv_navigation.setImageResource(R.mipmap.navigation_selected);
             tv_title.setText("导航");
+            iv_weather_search.setVisibility(View.GONE);
         } else if (index == 3) {
             mv_weather.setImageResource(R.mipmap.weather_selected);
             tv_title.setText("天气");
+            iv_weather_search.setVisibility(View.VISIBLE);
         }
         myViews.get(index).setSelected(true);
         viewPager.setCurrentItem(index);
@@ -238,6 +274,10 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
                 break;
             case R.id.civ_portrait:
                 mSlidingMenu.toggle();
+                break;
+            case R.id.iv_weather_search:
+                Intent intent = new Intent(this,SearchWeatherActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

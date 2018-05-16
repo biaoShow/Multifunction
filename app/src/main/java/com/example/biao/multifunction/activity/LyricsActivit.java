@@ -54,7 +54,7 @@ import java.util.List;
  * Created by biao on 2018/5/3.
  */
 
-public class LyricsActivit extends AppCompatActivity implements View.OnClickListener{
+public class LyricsActivit extends BaseActivity implements View.OnClickListener{
 
     //解析歌词后排序
     public static Comparator timeComparator = new Comparator() {
@@ -400,7 +400,7 @@ public class LyricsActivit extends AppCompatActivity implements View.OnClickList
      *
      * @return 返回是否保存成功
      */
-    private boolean saveLyrics(String song) {
+    private void saveLyrics(String song) {
         String stringLyrics = sendRequest(song);
         if (stringLyrics != null) {
             String state = Environment.getExternalStorageState();
@@ -467,10 +467,7 @@ public class LyricsActivit extends AppCompatActivity implements View.OnClickList
                     }
                 }
             }
-        } else {
-            return false;
         }
-        return true;
     }
 
     /**

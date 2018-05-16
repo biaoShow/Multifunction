@@ -1,6 +1,7 @@
 package com.example.biao.multifunction.fragment;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -38,6 +39,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.model.OverlayInfo;
+import com.example.biao.multifunction.util.LocationAddress;
 import com.example.biao.multifunction.util.MyOrientationListener;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
         tv_hotel = view.findViewById(R.id.tv_hotel);
         rl_overlay = view.findViewById(R.id.rl_overlay);
 
-                MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
+        MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
         mBaiduMap.setMapStatus(msu);
 
         //初始化定位
@@ -257,7 +259,7 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
 
         mBaiduMap.clear();
         LatLng latLng = null;
-        Marker marker = null;
+        Marker marker;
         OverlayOptions options;
         for(OverlayInfo info:overlayInfos){
             //经纬度
@@ -355,10 +357,13 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
                 LatLng latLng = new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude());
                 MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latLng);
                 mBaiduMap.animateMapStatus(msu);
-
+                LocationAddress.setAddressCounty(bdLocation.getAddrStr());
                 isFirst = false;
             }
 
+            Intent intent = new Intent("com.example.biao.LOCATIONUPUI");
+            intent.putExtra("countyname",LocationAddress.addressCounty);
+            getActivity().sendBroadcast(intent);
         }
     }
 }

@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+
     <application
         android:name="com.example.biao.multifunction.util.MyApplication"
         android:allowBackup="true"
@@ -40,6 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.LyricsActivit"/>
+        <activity android:name=".activity.SearchWeatherActivity"/>
         <service android:name=".service.MusicService"/>
         <receiver android:name=".activity.LyricsActivit$MusicReceiver"/>
         <service

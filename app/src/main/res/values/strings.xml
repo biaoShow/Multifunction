@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">机器人</string>
+    <string name="weather_itemtext">北京</string>
+    <string name="titel_text">音乐</string>
+    <string name="weathersearch_titel">中国</string>
+    <string name="_31">31°</string>
+    <string name="weacher_address">番禺</string>
+    <string name="weather">晴转多云</string>
+    <string name="wind">风向</string>
+    <string name="hum">相对湿度</string>
+    <string name="vis">可见度</string>
+    <string name="wind_size">3级</string>
+    <string name="hun_price">70%</string>
+    <string name="vis_price">10</string>
+    <string name="today">今天</string>
+    <string name="weather_today">多云</string>
+    <string name="wind_price_today">3级</string>
+    <string name="tmp_max_today">30°</string>
+    <string name="view">/</string>
+    <string name="tmp_min_today">25°</string>
+    <string name="tomorrow">明天</string>
+    <string name="weather_tomorron">多云</string>
+    <string name="wind_price">3级</string>
+    <string name="tmp_max_tomorrow">30°</string>
+    <string name="view_tomorrow">/</string>
+    <string name="tmp_min_tomorrow">25°</string>
+    <string name="aftertomorrow">后天</string>
+    <string name="weather_aftertomorrow">多云</string>
+    <string name="wind_price_aftertomorrow">3级</string>
+    <string name="tmp_max_aftertomorrow">30°</string>
+    <string name="view_aftertomorrow">/</string>
+    <string name="tmp_min_aftertomorrow">25°</string>
 </resources>
