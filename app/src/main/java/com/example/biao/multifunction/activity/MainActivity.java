@@ -150,6 +150,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     @Override
     protected void onStart() {
         super.onStart();
+        //判断是否为首次进入
         if(isFirst){
             i = 1;
             isFirst = false;
@@ -166,7 +167,6 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         //默认选中第一个Fragment
         if(i==1){
             //将viewPage添加到适配器显示
-            //放在此处，可避免首次进入应用出现空白列表
             viewPager.setAdapter(fragmentAdapter);
 
             setMenuSelector(0);
