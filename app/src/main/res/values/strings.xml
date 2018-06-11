@@ -30,4 +30,6 @@
     <string name="tmp_max_aftertomorrow">30°</string>
     <string name="view_aftertomorrow">/</string>
     <string name="tmp_min_aftertomorrow">25°</string>
+    <string name="video_name">视频名称</string>
+    <string name="video_time">时长</string>
 </resources>

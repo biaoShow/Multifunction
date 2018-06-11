@@ -139,14 +139,17 @@ public class WeatherFragment extends Fragment {
     private void updateUI(){
         //实时天气ui
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String cond_txt = preferences.getString("cond_txt",null);
         tv_weather_temperature.setText(preferences.getString("tmp",null) + "°");
-        tv_weather_weather.setText(preferences.getString("cond_txt",null));
-        if(preferences.getString("cond_txt",null).equals("晴")){
-            rl_weather_bg.setBackgroundResource(R.mipmap.clear);
-        }else if(preferences.getString("cond_txt",null).contains("雨")){
-            rl_weather_bg.setBackgroundResource(R.mipmap.rain);
-        }else{
-            rl_weather_bg.setBackgroundResource(R.mipmap.cloudy);
+        tv_weather_weather.setText(cond_txt);
+        if(cond_txt != null){
+            if(cond_txt.equals("晴")){
+                rl_weather_bg.setBackgroundResource(R.mipmap.clear);
+            }else if(cond_txt.contains("雨")){
+                rl_weather_bg.setBackgroundResource(R.mipmap.rain);
+            }else{
+                rl_weather_bg.setBackgroundResource(R.mipmap.cloudy);
+            }
         }
         tv_weather_direction.setText(preferences.getString("wind_dir",null));
         tv_weather_directionprice.setText(preferences.getString("wind_sc",null) + "级");
@@ -154,39 +157,48 @@ public class WeatherFragment extends Fragment {
         tv_weather_visibility.setText(preferences.getString("vis",null));
 
         //今天天气
-        tv_weather_weathermini.setText(preferences.getString("tcond_txt_d",null));
-        if(preferences.getString("tcond_txt_d",null).equals("晴")){
-            iv_weather_today.setImageResource(R.mipmap.fine);
-        }else if(preferences.getString("tcond_txt_d",null).contains("雨")){
-            iv_weather_today.setImageResource(R.mipmap.rain_mini);
-        }else{
-            iv_weather_today.setImageResource(R.mipmap.cloudy_mini);
+        String tcond_txt_d = preferences.getString("tcond_txt_d",null);
+        tv_weather_weathermini.setText(tcond_txt_d);
+        if (tcond_txt_d != null) {
+            if(tcond_txt_d.equals("晴")){
+                iv_weather_today.setImageResource(R.mipmap.fine);
+            }else if(tcond_txt_d.contains("雨")){
+                iv_weather_today.setImageResource(R.mipmap.rain_mini);
+            }else{
+                iv_weather_today.setImageResource(R.mipmap.cloudy_mini);
+            }
         }
         tv_weather_todaywind_dir.setText(preferences.getString("twind_sc",null) + "级");
         tv_weather_mintemperature.setText(preferences.getString("ttmp_min",null) + "°");
         tv_weather_maxtemperature.setText(preferences.getString("ttmp_max",null) + "°");
 
         //明天天气
-        tv_weather_weatherminitr.setText(preferences.getString("trcond_txt_d",null));
-        if(preferences.getString("trcond_txt_d",null).equals("晴")){
-            iv_weather_tomorrow.setImageResource(R.mipmap.fine);
-        }else if(preferences.getString("trcond_txt_d",null).contains("雨")){
-            iv_weather_tomorrow.setImageResource(R.mipmap.rain_mini);
-        }else{
-            iv_weather_tomorrow.setImageResource(R.mipmap.cloudy_mini);
+        String trcond_txt_d = preferences.getString("trcond_txt_d",null);
+        tv_weather_weatherminitr.setText(trcond_txt_d);
+        if (trcond_txt_d != null) {
+            if(trcond_txt_d.equals("晴")){
+                iv_weather_tomorrow.setImageResource(R.mipmap.fine);
+            }else if(trcond_txt_d.contains("雨")){
+                iv_weather_tomorrow.setImageResource(R.mipmap.rain_mini);
+            }else{
+                iv_weather_tomorrow.setImageResource(R.mipmap.cloudy_mini);
+            }
         }
         tv_weather_trwind_dir.setText(preferences.getString("trwind_sc",null) + "级");
         tv_weather_mintemperaturetr.setText(preferences.getString("trtmp_min",null) + "°");
         tv_weather_maxtemperaturetr.setText(preferences.getString("trtmp_max",null) + "°");
 
         //后天天气
-        tv_weather_weatherminiatr.setText(preferences.getString("atrcond_txt_d",null));
-        if(preferences.getString("atrcond_txt_d",null).equals("晴")){
-            iv_weather_aftertomorrow.setImageResource(R.mipmap.fine);
-        }else if(preferences.getString("atrcond_txt_d",null).contains("雨")){
-            iv_weather_aftertomorrow.setImageResource(R.mipmap.rain_mini);
-        }else{
-            iv_weather_aftertomorrow.setImageResource(R.mipmap.cloudy_mini);
+        String atrcond_txt_d = preferences.getString("atrcond_txt_d",null);
+        tv_weather_weatherminiatr.setText(atrcond_txt_d);
+        if(atrcond_txt_d != null){
+            if(atrcond_txt_d.equals("晴")){
+                iv_weather_aftertomorrow.setImageResource(R.mipmap.fine);
+            }else if(atrcond_txt_d.contains("雨")){
+                iv_weather_aftertomorrow.setImageResource(R.mipmap.rain_mini);
+            }else{
+                iv_weather_aftertomorrow.setImageResource(R.mipmap.cloudy_mini);
+            }
         }
         tv_weather_atrwind_dir.setText(preferences.getString("atrwind_sc",null) + "级");
         tv_weather_mintemperatureatr.setText(preferences.getString("atrtmp_min",null) + "°");
@@ -325,5 +337,12 @@ public class WeatherFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(weatherReceiver);
+        getActivity().unregisterReceiver(locationReceiver);
     }
 }

@@ -22,6 +22,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
 
     <application
         android:name="com.example.biao.multifunction.util.MyApplication"
@@ -32,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.baidu.lbsapi.API_KEY"
-            android:value="GKkE5imR1jPu1rGMBNxe197rNGY334SL"/>
+            android:value="irumO2RYYOCViGDG9qHORM5mpAZ5GPUS"/>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,8 +42,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="io.vov.vitamio.activity.InitActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".activity.LyricsActivit"/>
         <activity android:name=".activity.SearchWeatherActivity"/>
+        <activity android:name=".activity.PlayActivity"/>
         <service android:name=".service.MusicService"/>
         <receiver android:name=".activity.LyricsActivit$MusicReceiver"/>
         <service

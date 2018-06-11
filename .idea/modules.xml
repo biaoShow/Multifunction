@@ -3,8 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Multifunction.iml" filepath="$PROJECT_DIR$/Multifunction.iml" />
+      <module fileurl="file://D:\biao\Multifunction\Multifunction\Multifunction.iml" filepath="D:\biao\Multifunction\Multifunction\Multifunction.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\biao\Multifunction\Multifunction\app\app.iml" filepath="D:\biao\Multifunction\Multifunction\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://D:\biao\Multifunction\Multifunction\library\library.iml" filepath="D:\biao\Multifunction\Multifunction\library\library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
     </modules>
   </component>
 </project>
