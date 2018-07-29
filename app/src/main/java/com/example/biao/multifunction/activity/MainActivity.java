@@ -340,4 +340,9 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         list.add("关于我们");
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }

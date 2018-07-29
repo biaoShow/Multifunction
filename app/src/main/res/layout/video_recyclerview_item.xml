@@ -12,6 +12,7 @@
         android:id="@+id/iv_image"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:src="@mipmap/video_unselect"
         android:layout_centerVertical="true"
         tools:ignore="ContentDescription" />
 

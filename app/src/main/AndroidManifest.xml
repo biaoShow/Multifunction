@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.baidu.lbsapi.API_KEY"
-            android:value="irumO2RYYOCViGDG9qHORM5mpAZ5GPUS"/>
+            android:value="GKkE5imR1jPu1rGMBNxe197rNGY334SL"/>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

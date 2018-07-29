@@ -75,6 +75,7 @@ public class NavigationFragment extends Fragment implements View.OnClickListener
         //在使用SDK各组件之前初始化context信息，传入ApplicationContext
         //注意该方法要再setContentView方法之前实现
         SDKInitializer.initialize(getActivity().getApplicationContext());
+
         View view = inflater.inflate(R.layout.navigation_fragment_layout,container,false);
 
         //初始化控件

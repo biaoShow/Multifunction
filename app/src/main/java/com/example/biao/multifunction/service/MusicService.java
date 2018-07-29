@@ -166,7 +166,10 @@ public class MusicService extends Service {
          * @return
          */
         public String getPlaySong(){
-           return   list.get(playPosition).getSong();
+            if(list.size()>0){
+                return   list.get(playPosition).getSong();
+            }
+            return null;
         }
 
         /**
