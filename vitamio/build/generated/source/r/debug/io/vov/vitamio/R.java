@@ -13,18 +13,19 @@ public final class R {
         public static int transparent = 0x7f060003;
     }
     public static final class drawable {
-        public static int mediacontroller_button = 0x7f090001;
-        public static int mediacontroller_pause = 0x7f090002;
-        public static int mediacontroller_play = 0x7f090003;
-        public static int scrubber_control_disabled_holo = 0x7f090004;
-        public static int scrubber_control_focused_holo = 0x7f090005;
-        public static int scrubber_control_normal_holo = 0x7f090006;
-        public static int scrubber_control_pressed_holo = 0x7f090007;
-        public static int scrubber_control_selector_holo = 0x7f090008;
-        public static int scrubber_primary_holo = 0x7f090009;
-        public static int scrubber_progress_horizontal_holo_dark = 0x7f09000a;
-        public static int scrubber_secondary_holo = 0x7f09000b;
-        public static int scrubber_track_holo_dark = 0x7f09000c;
+        public static int ic_launcher = 0x7f090001;
+        public static int mediacontroller_button = 0x7f090002;
+        public static int mediacontroller_pause = 0x7f090003;
+        public static int mediacontroller_play = 0x7f090004;
+        public static int scrubber_control_disabled_holo = 0x7f090005;
+        public static int scrubber_control_focused_holo = 0x7f090006;
+        public static int scrubber_control_normal_holo = 0x7f090007;
+        public static int scrubber_control_pressed_holo = 0x7f090008;
+        public static int scrubber_control_selector_holo = 0x7f090009;
+        public static int scrubber_primary_holo = 0x7f09000a;
+        public static int scrubber_progress_horizontal_holo_dark = 0x7f09000b;
+        public static int scrubber_secondary_holo = 0x7f09000c;
+        public static int scrubber_track_holo_dark = 0x7f09000d;
     }
     public static final class id {
         public static int mediacontroller_file_name = 0x7f0c0001;
@@ -35,9 +36,6 @@ public final class R {
     }
     public static final class layout {
         public static int mediacontroller = 0x7f0f0001;
-    }
-    public static final class raw {
-        public static int libarm = 0x7f140001;
     }
     public static final class string {
         public static int VideoView_error_button = 0x7f150001;

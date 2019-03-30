@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove.OnPageChangeListener;
 
@@ -299,6 +300,7 @@ public class SlidingMenu extends RelativeLayout {
 	 * @param slideStyle either SLIDING_CONTENT or SLIDING_WINDOW
 	 * @param actionbarOverlay whether or not the ActionBar is overlaid
 	 */
+	@SuppressLint("NewApi")
 	public void attachToActivity(Activity activity, int slideStyle, boolean actionbarOverlay) {
 		if (slideStyle != SLIDING_WINDOW && slideStyle != SLIDING_CONTENT)
 			throw new IllegalArgumentException("slideStyle must be either SLIDING_WINDOW or SLIDING_CONTENT");
@@ -319,8 +321,15 @@ public class SlidingMenu extends RelativeLayout {
 			// save ActionBar themes that have transparent assets
 			decorChild.setBackgroundResource(background);
 			decor.removeView(decorChild);
-			decor.addView(this);
+//			decor.addView(this);
 			setContent(decorChild);
+			//沉浸状态栏
+			RelativeLayout relativeLayout = new RelativeLayout(activity);
+			TextView textView = new TextView(activity);
+			textView.setFitsSystemWindows(true);
+			relativeLayout.addView(textView);
+			relativeLayout.addView(this);
+			decor.addView(relativeLayout);
 			break;
 		case SLIDING_CONTENT:
 			mActionbarOverlay = actionbarOverlay;

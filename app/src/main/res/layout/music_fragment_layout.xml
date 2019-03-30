@@ -7,7 +7,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/musicfragment_recycerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"/>
     <com.example.biao.multifunction.definedview.CircleImageView
         android:id="@+id/civ_music"
         android:layout_alignParentRight="true"

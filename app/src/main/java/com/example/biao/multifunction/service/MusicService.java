@@ -1,6 +1,7 @@
 package com.example.biao.multifunction.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -26,7 +27,9 @@ public class MusicService extends Service {
     boolean isFrist = true;
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private MusicBinder musicBinder = new MusicBinder();
-
+    public static final int START = 0;
+    public static final int PAUSE = 1;
+    public static final int RESUME = 2;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,7 +41,6 @@ public class MusicService extends Service {
                 e.printStackTrace();
             }
         }
-
     }
 
     @Nullable
@@ -50,6 +52,10 @@ public class MusicService extends Service {
 
 
     public class MusicBinder extends Binder{
+        /**
+         * 播放
+         * @param position
+         */
         public void play(int position) {
             Log.i("MusicBinder",position+"");
             playPosition = position;
@@ -65,6 +71,7 @@ public class MusicService extends Service {
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();//开始音频
+                        sendBroadcast(START);
                     }
                 });
             } catch (IOException e) {
@@ -90,13 +97,14 @@ public class MusicService extends Service {
         public void pause() {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
+                sendBroadcast(PAUSE);
             } else {
                 if (isFrist) {
                     play(0);
                 } else {
                     mediaPlayer.start();
+                    sendBroadcast(START);
                 }
-
             }
         }
 
@@ -129,7 +137,7 @@ public class MusicService extends Service {
         public int getPlayDuration(){
             int rtn = 0;
             if(mediaPlayer!=null){
-                rtn =  mediaPlayer.getDuration();
+                rtn =  list.get(playPosition).getDuration();
             }
             return rtn;
         }
@@ -187,5 +195,16 @@ public class MusicService extends Service {
         public boolean isPlaying(){
             return mediaPlayer.isPlaying();
         }
+    }
+
+    /**
+     * 发送广播
+     * @param status
+     */
+    private void sendBroadcast(int status){
+        Intent intent = new Intent();
+        intent.setAction("com.biao.Music_Broadcast");
+        intent.putExtra("status",status);
+        sendBroadcast(intent);
     }
 }

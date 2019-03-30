@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="75dp"
     android:background="#1E90FF">
 
 
@@ -10,7 +10,7 @@
         android:id="@+id/civ_portrait"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="27.5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="5dp"
         custom:radius="20dp"
@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="32dp"
         android:textSize="18sp"
         android:textColor="#FFFFFF"
         android:text="@string/titel_text" />
@@ -32,10 +32,10 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="27.5dp"
         android:layout_marginRight="10dp"
-        android:visibility="gone"
         android:src="@mipmap/search"
+        android:visibility="gone"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp" />
 

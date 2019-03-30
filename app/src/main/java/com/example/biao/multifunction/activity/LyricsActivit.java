@@ -189,12 +189,13 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener{
     }
 
     /**
-     * ui更新方法
+     * 歌曲信息ui更新方法
      */
     private void upDateUI(int duration,String song,String singer){
         sb_lyrics.setMax(duration);
         tv_lyrics_song.setText(song);
         tv_lyrics_singer.setText(singer);
+        Log.i("歌词分钟数：",duration+"-----"+MusicUtils.formatTime(duration));
         tv_lyrics_alltime.setText(MusicUtils.formatTime(duration));
         if(musicBinder.isPlaying()){
             iv_lyrics_startandpause.setImageResource(R.mipmap.start);

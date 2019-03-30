@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.example.biao.multifunction.R;
 
 import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.Vitamio;
+import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.widget.MediaController;
 import io.vov.vitamio.widget.VideoView;
 
@@ -28,10 +30,20 @@ public class PlayActivity extends AppCompatActivity implements MediaPlayer.OnPre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Vitamio.isInitialized(getApplicationContext());
         setContentView(R.layout.playvideo_activty);
+
+//        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        }
 
         videoView = findViewById(R.id.vv_play);
         String str = getIntent().getStringExtra("playPath");
+        videoView.setOnPreparedListener(this);
+        videoView.setOnErrorListener(this);
+        videoView.setOnCompletionListener(this);
+
+        videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);//隐藏通知栏
         videoView.setVideoURI(Uri.parse(str));
 //        videoView.setVideoPath(str);
 //        videoView.setVideoURI(Uri.parse("http://112.253.22.157/17/z/z/y/u/zzyuasjwufnqerzvyxgkuigrkcatxr/hc.yinyuetai.com/D046015255134077DDB3ACA0D7E68D45.flv"));
@@ -39,25 +51,15 @@ public class PlayActivity extends AppCompatActivity implements MediaPlayer.OnPre
 
 //        mVideoView.setMediaController(new MediaController(this,true,relativeLayout));
         //设置监听
-        videoView.setOnPreparedListener(this);
-        videoView.setOnErrorListener(this);
-        videoView.setOnCompletionListener(this);
+
 
     }
 
-    @Override
-    protected void onResume() {
-        //强制横屏
-        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-              setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-        super.onResume();
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPrepared(MediaPlayer mp) {
-        videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);//隐藏通知栏
+//        videoView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);//隐藏通知栏
         Toast.makeText(this,"准备好了", Toast.LENGTH_LONG).show();
         videoView.start();//播放视频
     }

@@ -34,7 +34,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.baidu.lbsapi.API_KEY"
-            android:value="GKkE5imR1jPu1rGMBNxe197rNGY334SL"/>
+            android:value="irumO2RYYOCViGDG9qHORM5mpAZ5GPUS"/>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +50,8 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".activity.LyricsActivit"/>
         <activity android:name=".activity.SearchWeatherActivity"/>
-        <activity android:name=".activity.PlayActivity"/>
+        <activity android:name=".activity.PlayActivity"
+            android:screenOrientation="landscape"/>
         <service android:name=".service.MusicService"/>
         <receiver android:name=".activity.LyricsActivit$MusicReceiver"/>
         <service
