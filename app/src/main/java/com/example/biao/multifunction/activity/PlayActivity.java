@@ -22,7 +22,7 @@ import io.vov.vitamio.widget.VideoView;
  * Created by ZeQiang Fang on 2018/6/9.
  */
 
-public class PlayActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener,
+public class PlayActivity extends BaseActivity implements MediaPlayer.OnPreparedListener,
         MediaPlayer.OnErrorListener,MediaPlayer.OnCompletionListener {
 
     private VideoView videoView;

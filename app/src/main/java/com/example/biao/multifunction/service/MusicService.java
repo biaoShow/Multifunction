@@ -1,7 +1,6 @@
 package com.example.biao.multifunction.service;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -9,32 +8,36 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.model.Song;
 import com.example.biao.multifunction.util.MusicUtils;
+import com.example.biao.multifunction.util.MyApplication;
+import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- *  音乐控制服务类
+ * 音乐控制服务类
  * Created by biao on 2018/5/4.
  */
 
 public class MusicService extends Service {
 
     List<Song> list;
-    public int playPosition = 0;
+    public int playPosition = SharedPreferencesUtil.getIntent(this).getInt(PreferencesKep.PLAY_POSITION);
     boolean isFrist = true;
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private MusicBinder musicBinder = new MusicBinder();
     public static final int START = 0;
     public static final int PAUSE = 1;
     public static final int RESUME = 2;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        list = MusicUtils.list;
-        if(list.size()>0){
+        list = MusicUtils.getMusicData(this);
+        if (list.size() > 0) {
             try {
                 mediaPlayer.setDataSource(list.get(0).getPath());
             } catch (IOException e) {
@@ -50,14 +53,15 @@ public class MusicService extends Service {
     }
 
 
-
-    public class MusicBinder extends Binder{
+    public class MusicBinder extends Binder {
         /**
          * 播放
+         *
          * @param position
          */
-        public void play(int position) {
-            Log.i("MusicBinder",position+"");
+        public void play(final int position) {
+            Log.i("MusicBinder", position + "");
+//            SharedPreferencesUtil.getIntent(MusicService.this).putInt(PreferencesKep.PLAY_POSITION, position);
             playPosition = position;
             isFrist = false;
             try {
@@ -72,6 +76,7 @@ public class MusicService extends Service {
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();//开始音频
                         sendBroadcast(START);
+                        musicBroadcast(position);
                     }
                 });
             } catch (IOException e) {
@@ -86,11 +91,9 @@ public class MusicService extends Service {
                 }
             });
 
-            //发送广播通知SecodActivity UI更新
-            Intent intent = new Intent("com.example.biao.service.UPDATEUI");
-            intent.putExtra("playsong",list.get(position));
-            sendBroadcast(intent);
         }
+
+
         /**
          * 暂停或者播放
          */
@@ -100,7 +103,7 @@ public class MusicService extends Service {
                 sendBroadcast(PAUSE);
             } else {
                 if (isFrist) {
-                    play(0);
+                    play(SharedPreferencesUtil.getIntent(MyApplication.getContext()).getInt(PreferencesKep.PLAY_POSITION));
                 } else {
                     mediaPlayer.start();
                     sendBroadcast(START);
@@ -111,33 +114,34 @@ public class MusicService extends Service {
         /**
          * 下一首
          */
-        public void next(){
-            if(playPosition==(list.size()-1)){
+        public void next() {
+            if (playPosition == (list.size() - 1)) {
                 play(0);
-            }else{
-                play(playPosition+1);
+            } else {
+                play(playPosition + 1);
             }
         }
 
         /**
          * 上一首
          */
-        public void last(){
-            if(playPosition==0){
-                play(list.size()-1);
-            }else{
-                play(playPosition-1);
+        public void last() {
+            if (playPosition == 0) {
+                play(list.size() - 1);
+            } else {
+                play(playPosition - 1);
             }
         }
 
         /**
          * 获取歌曲长度
+         *
          * @return
          */
-        public int getPlayDuration(){
+        public int getPlayDuration() {
             int rtn = 0;
-            if(mediaPlayer!=null){
-                rtn =  list.get(playPosition).getDuration();
+            if (mediaPlayer != null) {
+                rtn = list.get(playPosition).getDuration();
             }
             return rtn;
         }
@@ -145,12 +149,12 @@ public class MusicService extends Service {
 
         /**
          * 获取当前歌曲播放进度
+         *
          * @return
          */
-        public int getPlayCurrentPosition(){
+        public int getPlayCurrentPosition() {
             int rtn = 0;
-            if (mediaPlayer != null)
-            {
+            if (mediaPlayer != null) {
                 rtn = mediaPlayer.getCurrentPosition();
             }
 
@@ -159,52 +163,63 @@ public class MusicService extends Service {
 
         /**
          * 拉动进度条时候后设置进度播放
+         *
          * @param position
          */
-        public void seekTo(int position)
-        {
-            if (mediaPlayer != null)
-            {
+        public void seekTo(int position) {
+            if (mediaPlayer != null) {
                 mediaPlayer.seekTo(position);
             }
         }
 
         /**
          * 获取播放歌曲名称
+         *
          * @return
          */
-        public String getPlaySong(){
-            if(list.size()>0){
-                return   list.get(playPosition).getSong();
+        public String getPlaySong() {
+            if (list.size() > 0) {
+                return list.get(playPosition).getSong();
             }
             return null;
         }
 
         /**
          * 获取播放歌曲歌手
+         *
          * @return
          */
-        public String getPlaySinger(){
+        public String getPlaySinger() {
             return list.get(playPosition).getSinger();
         }
 
         /**
          * 判断歌曲是否在播放
+         *
          * @return
          */
-        public boolean isPlaying(){
+        public boolean isPlaying() {
             return mediaPlayer.isPlaying();
         }
     }
 
     /**
      * 发送广播
+     *
      * @param status
      */
-    private void sendBroadcast(int status){
+    private void sendBroadcast(int status) {
         Intent intent = new Intent();
         intent.setAction("com.biao.Music_Broadcast");
-        intent.putExtra("status",status);
+        intent.putExtra("status", status);
+        sendBroadcast(intent);
+    }
+
+    private void musicBroadcast(int position) {
+        //发送广播通知SecodActivity UI更新
+        Intent intent = new Intent("com.example.biao.service.UPDATEUI");
+        intent.putExtra("play_position", position);
+        intent.putExtra("playsong", list.get(position));
         sendBroadcast(intent);
     }
 }

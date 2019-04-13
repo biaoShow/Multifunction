@@ -7,4 +7,9 @@
     <drawable name="clr_pressed">#E3E3E3</drawable>
     <drawable name="lyc_unselect">#6495ED</drawable>
     <drawable name="lyc_selected">#4F94CD</drawable>
+    <drawable name="sidebar_press">#00ffffff</drawable>
+    <drawable name="sidebar_select_letter">#bfbfbf</drawable>
+    <color name="sidebar_right_select">#1E90FF</color>
+    <color name="item_song">#000000</color>
+    <color name="item_singer_and_time">#6B6B6B</color>
 </resources>

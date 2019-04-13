@@ -190,7 +190,7 @@ public class MyView extends View {
      * 提供使用类方法设置图片
      *
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @SuppressLint("NewApi")
     public void setImageResource(int src) {
         this.mysrc = context.getDrawable(src);
         bitmap = drawableToBitmap(mysrc);

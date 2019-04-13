@@ -61,7 +61,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         };
         ((MyViewHolder)holder).tv_video_name.setText(list.get(position).getName());
         ((MyViewHolder)holder).tv_video_time.setText(GetLocalVieoInfo.formatTime(list.get(position).getTime()));
-        //一步加载视频截图
+        //异步加载视频截图
         new Thread(new Runnable() {
             @Override
             public void run() {

@@ -6,10 +6,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * 创建数据库类
+ * 不用框架前的写法（已作废）
  * Created by biao on 2018/5/15.
  */
 
-public class WeatherOpenHelper extends SQLiteOpenHelper{
+public class WeatherOpenHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_PROVINCE = "create table Province(" +
             "id integer primary key autoincrement," +
@@ -27,7 +28,6 @@ public class WeatherOpenHelper extends SQLiteOpenHelper{
             "county_name text," +
             "county_code text," +
             "city_id integer)";
-
 
 
     public WeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {

@@ -12,9 +12,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.adapter.WeatherRecyclerViewAdapter;
-import com.example.biao.multifunction.db.WeatherDB;
+import com.example.biao.multifunction.db.util.DataBaseManager;
 import com.example.biao.multifunction.model.City;
 import com.example.biao.multifunction.model.County;
 import com.example.biao.multifunction.model.Province;
@@ -31,12 +32,13 @@ import java.util.List;
  * Created by biao on 2018/5/15.
  */
 
-public class SearchWeatherActivity extends BaseActivity{
+public class SearchWeatherActivity extends BaseActivity {
 
     private List<Province> provinceList;//省份对象
     private List<City> cityList;//市级对象
     private List<County> countyList;//县/区对象
-    private WeatherDB weatherDB;//数据操作库对象
+    //    private WeatherDB weatherDB;//数据操作库对象
+    private DataBaseManager dataBaseManager;//数据操作库对象
     private Province selectProvince;//记录选择的省
     private City selectCity;//记录选择的市
     private String current;//记录当前页面
@@ -60,27 +62,27 @@ public class SearchWeatherActivity extends BaseActivity{
             window.setNavigationBarColor(Color.BLACK);
         }
 
-        weatherDB = WeatherDB.getInstance(this);
+//        weatherDB = WeatherDB.getInstance(this);
+        dataBaseManager = DataBaseManager.getInstance(this);
         tv_title_text = findViewById(R.id.tv_title_text);
         weather_recyclerview = findViewById(R.id.weather_recyclerview);
-        weatherRecyclerViewAdapter = new WeatherRecyclerViewAdapter(this,list);
+        weatherRecyclerViewAdapter = new WeatherRecyclerViewAdapter(this, list);
 
         weather_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         weather_recyclerview.setAdapter(weatherRecyclerViewAdapter);
         weatherRecyclerViewAdapter.setOnClickWeatherItemListener(new OnClickWeatherItemListener() {
             @Override
             public void onClickItem(int position) {
-                if("province".equals(current)){
+                if ("province".equals(current)) {
                     selectProvince = provinceList.get(position);
                     queryCities();
-                }else if("city".equals(current)){
+                } else if ("city".equals(current)) {
                     selectCity = cityList.get(position);
                     queryCounties();
-                }else if("county".equals(current)){
+                } else if ("county".equals(current)) {
                     //发送广播给WeatherFragment更新UI
                     Intent intent = new Intent("com.example.biao.activity.UPDATEWEATHERUI");
-                    intent.putExtra("countycode",countyList.get(position).getCountyCode());
-                    intent.putExtra("countyname",countyList.get(position).getCountyName());
+                    intent.putExtra("countyname", countyList.get(position).getCountyName());
                     sendBroadcast(intent);
                     finish();
                 }
@@ -93,18 +95,19 @@ public class SearchWeatherActivity extends BaseActivity{
     /**
      * 获取省份数据，先查询数据库是否有数据，没有则到服务器获取
      */
-    private void queryProvinces(){
-        provinceList = weatherDB.loadProvince();
-        if(provinceList.size() > 0){
+    private void queryProvinces() {
+//        provinceList = weatherDB.loadProvince();
+        provinceList = dataBaseManager.queryAll(Province.class);
+        if (provinceList.size() > 0) {
             list.clear();
-            for(Province province:provinceList){
+            for (Province province : provinceList) {
                 list.add(province.getProvinceName());
             }
             weatherRecyclerViewAdapter.notifyDataSetChanged();
             current = "province";
             tv_title_text.setText("中国");
-        }else{
-            queryFromServer("province",null);
+        } else {
+            queryFromServer("province", null);
         }
     }
 
@@ -112,17 +115,18 @@ public class SearchWeatherActivity extends BaseActivity{
      * 获取市级数据，先查询数据库是否有数据，没有则到服务区获取
      */
     private void queryCities() {
-        cityList = weatherDB.loadCity(String.valueOf(selectProvince.getId()));
-        if(cityList.size() > 0){
+//        cityList = weatherDB.loadCity(String.valueOf(selectProvince.getId()));
+        cityList = dataBaseManager.queryByWhere(City.class, "provinceId", new String[]{String.valueOf(selectProvince.getId())});
+        if (cityList.size() > 0) {
             list.clear();
-            for(City city: cityList){
+            for (City city : cityList) {
                 list.add(city.getCityName());
             }
             weatherRecyclerViewAdapter.notifyDataSetChanged();
             current = "city";
             tv_title_text.setText(selectProvince.getProvinceName());
-        }else{
-            queryFromServer("city",selectProvince.getProvinceCode());
+        } else {
+            queryFromServer("city", selectProvince.getProvinceCode());
         }
     }
 
@@ -130,52 +134,54 @@ public class SearchWeatherActivity extends BaseActivity{
      * 获取县/区数据，先查询数据库是否存在数据，没有则到服务器获取
      */
     private void queryCounties() {
-        countyList = weatherDB.loadCounty(String.valueOf(selectCity.getId()));
-        if(countyList.size() > 0){
+//        countyList = weatherDB.loadCounty(String.valueOf(selectCity.getId()));
+        countyList = dataBaseManager.queryByWhere(County.class, "cityId", new String[]{String.valueOf(selectCity.getId())});
+        if (countyList.size() > 0) {
             list.clear();
-            for(County county: countyList){
+            for (County county : countyList) {
                 list.add(county.getCountyName());
             }
             weatherRecyclerViewAdapter.notifyDataSetChanged();
             current = "county";
             tv_title_text.setText(selectCity.getCityName());
-        }else{
-            queryFromServer("county",selectCity.getCityCode());
+        } else {
+            queryFromServer("county", selectCity.getCityCode());
         }
     }
 
     /**
      * 通过网络请求获取省市区/县的数据
+     *
      * @param type 请求的类型（省/市/县）
      * @param code 选择的省/市代号
      */
     private void queryFromServer(final String type, String code) {
         String address = "http://www.weather.com.cn/data/list3/";
-        if("province".equals(type)){
+        if ("province".equals(type)) {
             address += "city.xml";
-        }else{
+        } else {
             address = address + "city" + code + ".xml";
         }
         WeatherHttpUtils.sendHttpRequest(address, new WeatehwrHttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 boolean result = false;
-                if("province".equals(type)){
-                    result = WeatherAnalysisUtil.handleProvinceResponse(weatherDB,response);
-                }else if("city".equals(type)){
-                    result = WeatherAnalysisUtil.handelCityResponse(weatherDB,response,selectProvince.getId());
-                }else if("county".equals(type)){
-                    result = WeatherAnalysisUtil.handelCountyRespose(weatherDB,response,selectCity.getId());
+                if ("province".equals(type)) {
+                    result = WeatherAnalysisUtil.handleProvinceResponse(response);
+                } else if ("city".equals(type)) {
+                    result = WeatherAnalysisUtil.handelCityResponse(response, selectProvince.getId());
+                } else if ("county".equals(type)) {
+                    result = WeatherAnalysisUtil.handelCountyRespose(response, selectCity.getId());
                 }
-                if(result){
+                if (result) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if("province".equals(type)){
+                            if ("province".equals(type)) {
                                 queryProvinces();
-                            }else if("city".equals(type)){
+                            } else if ("city".equals(type)) {
                                 queryCities();
-                            }else if("county".equals(type)){
+                            } else if ("county".equals(type)) {
                                 queryCounties();
                             }
                         }
@@ -189,7 +195,7 @@ public class SearchWeatherActivity extends BaseActivity{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SearchWeatherActivity.this,"加载失败",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SearchWeatherActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -198,11 +204,11 @@ public class SearchWeatherActivity extends BaseActivity{
 
     @Override
     public void onBackPressed() {
-        if("county".equals(current)){
+        if ("county".equals(current)) {
             queryCities();
-        }else if("city".equals(current)){
+        } else if ("city".equals(current)) {
             queryProvinces();
-        }else{
+        } else {
             finish();
         }
     }

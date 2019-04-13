@@ -1,10 +1,12 @@
 package com.example.biao.multifunction.model;
 
+import com.litesuits.orm.db.annotation.Table;
+
 /**
  * 天气预报中省份实体类
  * Created by biao on 2018/5/15.
  */
-
+@Table("Province")
 public class Province {
     private int id;
     private String provinceName;

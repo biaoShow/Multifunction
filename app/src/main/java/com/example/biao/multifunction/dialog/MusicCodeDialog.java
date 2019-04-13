@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.model.Song;
 import com.example.biao.multifunction.util.MusicUtils;
+
 import java.util.List;
 
 /**
@@ -17,19 +18,19 @@ import java.util.List;
  * Created by biao on 2018/5/5.
  */
 
-public class MusicCodeDialog extends Dialog{
+public class MusicCodeDialog extends Dialog {
 
     private List<Song> list;
     private Context context;
     private int position;
-    private TextView tv_dialog_song,tv_dialog_singer,tv_dialog_duration,
-            tv_dialog_size,tv_dialog_path,tv_dialog_close;
+    private TextView tv_dialog_song, tv_dialog_singer, tv_dialog_duration,
+            tv_dialog_size, tv_dialog_path, tv_dialog_close;
 
-    public MusicCodeDialog(@NonNull Context context,int position) {
+    public MusicCodeDialog(@NonNull Context context, int position) {
         super(context);
         this.context = context;
         this.position = position;
-        this.list = MusicUtils.list;
+        this.list = MusicUtils.getMusicData(context);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class MusicCodeDialog extends Dialog{
 
     /**
      * 设置控件参数
+     *
      * @param position 点击的item （歌曲单list的编号）
      */
 
@@ -65,7 +67,7 @@ public class MusicCodeDialog extends Dialog{
         tv_dialog_song.setText(list.get(position).getSong());
         tv_dialog_singer.setText(list.get(position).getSinger());
         tv_dialog_duration.setText(MusicUtils.formatTime(list.get(position).getDuration()));
-        tv_dialog_size.setText(MusicUtils.formatSize(list.get(position).getSize()));
+        tv_dialog_size.setText(MusicUtils.formatSize(list.get(position).getSize()) + " m");
         tv_dialog_path.setText(MusicUtils.getFilePath(list.get(position).getPath()));
     }
 }

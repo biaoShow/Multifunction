@@ -3,7 +3,7 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="#1E90FF">
+    android:background="@color/colorPrimary">
 
 
     <com.example.biao.multifunction.definedview.CircleImageView
@@ -14,6 +14,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="5dp"
         custom:radius="20dp"
+        android:onClick="onViewClicked"
         custom:src="@mipmap/portrait"
         android:layout_marginStart="10dp" />
 
@@ -36,6 +37,7 @@
         android:layout_marginRight="10dp"
         android:src="@mipmap/search"
         android:visibility="gone"
+        android:onClick="onViewClicked"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp" />
 

@@ -9,12 +9,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"/>
+    <com.example.biao.multifunction.definedview.SideBar
+        android:id="@+id/sideBar"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"/>
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:background="@drawable/bg_sidebar_press"
+        android:textColor="@drawable/sidebar_select_letter"
+        android:visibility="gone"
+        android:textSize="30dp"/>
+    <ImageView
+        android:id="@+id/iv_play_location"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/play_location"
+        android:layout_toLeftOf="@+id/civ_music"/>
     <com.example.biao.multifunction.definedview.CircleImageView
         android:id="@+id/civ_music"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         custom:radius="25dp"

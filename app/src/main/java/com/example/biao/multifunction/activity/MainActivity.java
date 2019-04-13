@@ -1,6 +1,7 @@
 package com.example.biao.multifunction.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -21,9 +22,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.adapter.FragmentAdapter;
 import com.example.biao.multifunction.adapter.LeftRecylerviewAdapter;
+import com.example.biao.multifunction.definedview.CircleImageView;
 import com.example.biao.multifunction.definedview.MyView;
 import com.example.biao.multifunction.fragment.MusicFragment;
 import com.example.biao.multifunction.fragment.NavigationFragment;
@@ -35,10 +38,32 @@ import com.example.biao.multifunction.util.MyApplication;
 import com.example.biao.multifunction.util.OnClickLeftRLItemListener;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MainActivity extends SlidingFragmentActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
+
+    @BindView(R.id.civ_portrait)
+    CircleImageView civPortrait;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.iv_weather_search)
+    ImageView ivWeatherSearch;
+    @BindView(R.id.viewPager)
+    ViewPager viewPager;
+    @BindView(R.id.mv_music)
+    MyView mvMusic;
+    @BindView(R.id.mv_video)
+    MyView mvVideo;
+    @BindView(R.id.mv_navigation)
+    MyView mvNavigation;
+    @BindView(R.id.mv_weather)
+    MyView mvWeather;
 
     private SlidingMenu mSlidingMenu;//第三方库SlidingMenu对象
     private FragmentAdapter fragmentAdapter;//fragment 适配器
@@ -48,10 +73,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     private NavigationFragment navigationFragment;
     private ArrayList<Fragment> fragments = new ArrayList<>();//fragment 集合
     private ArrayList<MyView> myViews = new ArrayList<>();//自定义MyView类型控件数组
-    private MyView mv_music, mv_video, mv_navigation, mv_weather;
-    private ViewPager viewPager;
-    private boolean isFirst=false;//判断是否第一次进入
-    private int i;//判断是否需要设置第一页
+    private boolean isFirst = true;//判断是否第一次进入
 
     //菜单栏对象和控件
     private RecyclerView left_recyclerview;
@@ -59,52 +81,21 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     private List<String> list = new ArrayList<>();
     private TextView tv_back;
 
-    //title 布局控件
-    private TextView tv_title;
-    private View civ_portrait;
-    private ImageView iv_weather_search;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         initTranslucentStatus();//设置状态栏为透明
         setBehindContentView(R.layout.left_menu);
         ActivityCollecter.addActivity(this);
-        isFirst=true;
-        i=1;
 
+        applyForPermission();
+        initData();
+    }
 
-        //android 6.0及以上权限申请
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)  //可写
-                    != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MyApplication.getContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(MyApplication.getContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)!=
-                    PackageManager.PERMISSION_GRANTED) {
-                //申请ACCESS_FINE_LOCATION权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-            } else {
-                MusicUtils.getMusicData(MyApplication.getContext());
-            }
-        }
-
-        //activit_main布局控件初始化
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        mv_music = (MyView) findViewById(R.id.mv_music);
-        mv_video = (MyView) findViewById(R.id.mv_video);
-        mv_navigation = (MyView) findViewById(R.id.mv_navigation);
-        mv_weather = (MyView) findViewById(R.id.mv_weather);
-
-        //title_layout布局控件初始化
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        civ_portrait = findViewById(R.id.civ_portrait);
-        iv_weather_search = (ImageView) findViewById(R.id.iv_weather_search);
-
-        setList();//初始化泛型list数组
-
+    private void initData() {
         //创建SlidingMenu对象和配置
         mSlidingMenu = getSlidingMenu();
         mSlidingMenu.setTouchModeBehind(SlidingMenu.TOUCHMODE_FULLSCREEN);
@@ -114,11 +105,13 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         mSlidingMenu.setFadeDegree(0.35f);
         mSlidingMenu.setOffsetFadeDegree(0.4f);//左划时剩余部分变暗
 
+        setList();//初始化泛型list数组
+
         //将fragment添加到适配器
-        myViews.add(mv_music);
-        myViews.add(mv_video);
-        myViews.add(mv_navigation);
-        myViews.add(mv_weather);
+        myViews.add(mvMusic);
+        myViews.add(mvVideo);
+        myViews.add(mvNavigation);
+        myViews.add(mvWeather);
         musicFragment = new MusicFragment();
         videoFragment = new VideoFragment();
         navigationFragment = new NavigationFragment();
@@ -130,19 +123,64 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
 
         viewPager.setOnPageChangeListener(this);
-        civ_portrait.setOnClickListener(this);
-        iv_weather_search.setOnClickListener(this);
+
+        if (isFirst) {
+            viewPager.setAdapter(fragmentAdapter);
+            setMenuSelector(0);
+        }
+
+        //左菜单栏控件初始化
+        View view = mSlidingMenu.getMenu();//获取左拉菜单栏view对象
+        tv_back = view.findViewById(R.id.tv_back);
+
+        tv_back.setOnClickListener(this);
+        left_recyclerview = view.findViewById(R.id.left_recyclerview);
+        leftRecylerviewAdapter = new LeftRecylerviewAdapter(this, list);
+        left_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        left_recyclerview.setAdapter(leftRecylerviewAdapter);
+
+        leftRecylerviewAdapter.setOnClickLeftRLItemListener(new OnClickLeftRLItemListener() {
+            @Override
+            public void onClickItem(int position) {
+                if (1 < position && position < 6) {
+                    setMenuSelector(position - 2);
+                    mSlidingMenu.toggle();
+                } else {
+                    Toast.makeText(MainActivity.this, "功能暂未实现", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
-    private void initTranslucentStatus(){
+    /**
+     * android 6.0及以上权限申请
+     */
+    private void applyForPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)  //可写
+                    != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(MyApplication.getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(MyApplication.getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                            PackageManager.PERMISSION_GRANTED) {
+                //申请ACCESS_FINE_LOCATION权限
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+            }
+        }
+    }
 
+
+    /**
+     * 设置状态栏
+     */
+    private void initTranslucentStatus() {
         //4.4 全透明状态栏（有的机子是过渡形式的透明）
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
         //5.0 全透明实现
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -154,78 +192,16 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case 100:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    MusicUtils.getMusicData(MyApplication.getContext());
-                }else{
-                    Toast.makeText(MyApplication.getContext(),"您已拒绝了权限！",Toast.LENGTH_SHORT).show();
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(MyApplication.getContext(), "您已拒绝了权限！", Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 break;
             default:
                 break;
         }
-    }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //判断是否为首次进入
-        if(isFirst){
-            i = 1;
-            isFirst = false;
-        }else{
-           i=0;
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i("MainActivity","----------onResume----------");
-        //默认选中第一个Fragment
-        if(i==1){
-            //将viewPage添加到适配器显示
-            viewPager.setAdapter(fragmentAdapter);
-
-            setMenuSelector(0);
-            mv_music.setImageResource(R.mipmap.selectedmusic);
-            isFirst = false;
-        }
-
-        //为控件设置监听事件
-        mv_music.setOnClickListener(this);
-        mv_video.setOnClickListener(this);
-        mv_navigation.setOnClickListener(this);
-        mv_weather.setOnClickListener(this);
-
-
-        //左菜单栏控件初始化
-        View view = mSlidingMenu.getMenu();//获取左拉菜单栏view对象
-
-        tv_back = view.findViewById(R.id.tv_back);
-
-
-        tv_back.setOnClickListener(this);
-        left_recyclerview = view.findViewById(R.id.left_recyclerview);
-        leftRecylerviewAdapter = new LeftRecylerviewAdapter(this,list);
-        left_recyclerview.setLayoutManager(new LinearLayoutManager(this));
-        left_recyclerview.setAdapter(leftRecylerviewAdapter);
-
-        leftRecylerviewAdapter.setOnClickLeftRLItemListener(new OnClickLeftRLItemListener() {
-            @Override
-            public void onClickItem(int position) {
-                if(1<position && position<6){
-                    setMenuSelector(position-2);
-                    mSlidingMenu.toggle();
-                }else{
-                    Toast.makeText(MainActivity.this,"功能暂未实现",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @Override
@@ -239,27 +215,26 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
      *
      * @param index 选择到的项目
      */
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setMenuSelector(int index) {
         reSetSelected();
         resetTextColor();
-        myViews.get(index).setTextColor(0xff4876FF);
+        myViews.get(index).setTextColor(0xff0493f9);
         if (index == 0) {
-            mv_music.setImageResource(R.mipmap.selectedmusic);
-            tv_title.setText("音乐");
-            iv_weather_search.setVisibility(View.GONE);
+            mvMusic.setImageResource(R.mipmap.selectedmusic);
+            tvTitle.setText("音乐");
+            ivWeatherSearch.setVisibility(View.GONE);
         } else if (index == 1) {
-            mv_video.setImageResource(R.mipmap.video_selected);
-            tv_title.setText("视频");
-            iv_weather_search.setVisibility(View.GONE);
+            mvVideo.setImageResource(R.mipmap.video_selected);
+            tvTitle.setText("视频");
+            ivWeatherSearch.setVisibility(View.GONE);
         } else if (index == 2) {
-            mv_navigation.setImageResource(R.mipmap.navigation_selected);
-            tv_title.setText("导航");
-            iv_weather_search.setVisibility(View.GONE);
+            mvNavigation.setImageResource(R.mipmap.navigation_selected);
+            tvTitle.setText("导航");
+            ivWeatherSearch.setVisibility(View.GONE);
         } else if (index == 3) {
-            mv_weather.setImageResource(R.mipmap.weather_selected);
-            tv_title.setText("天气");
-            iv_weather_search.setVisibility(View.VISIBLE);
+            mvWeather.setImageResource(R.mipmap.weather_selected);
+            tvTitle.setText("天气");
+            ivWeatherSearch.setVisibility(View.VISIBLE);
         }
         myViews.get(index).setSelected(true);
         viewPager.setCurrentItem(index);
@@ -274,32 +249,12 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.mv_music:
-                setMenuSelector(0);
-                break;
-            case R.id.mv_video:
-                setMenuSelector(1);
-                break;
-            case R.id.mv_navigation:
-                setMenuSelector(2);
-                break;
-            case R.id.mv_weather:
-                setMenuSelector(3);
-                break;
             case R.id.tv_back:
                 musicFragment.stopService();
                 finish();
-                break;
-            case R.id.civ_portrait:
-                mSlidingMenu.toggle();
-                break;
-            case R.id.iv_weather_search:
-                Intent intent = new Intent(this,SearchWeatherActivity.class);
-                startActivity(intent);
                 break;
             default:
                 break;
@@ -310,17 +265,16 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
      * 重置底部tab按键文字颜色和图片颜色
      */
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void resetTextColor() {
-        mv_music.setTextColor(0xff888888);
-        mv_video.setTextColor(0xff888888);
-        mv_navigation.setTextColor(0xff888888);
-        mv_weather.setTextColor(0xff888888);
+        mvMusic.setTextColor(0xff888888);
+        mvVideo.setTextColor(0xff888888);
+        mvNavigation.setTextColor(0xff888888);
+        mvWeather.setTextColor(0xff888888);
 
-        mv_music.setImageResource(R.mipmap.unselectmusci);
-        mv_video.setImageResource(R.mipmap.video_unselect);
-        mv_navigation.setImageResource(R.mipmap.navigation_unselect);
-        mv_weather.setImageResource(R.mipmap.weather_unselect);
+        mvMusic.setImageResource(R.mipmap.unselectmusci);
+        mvVideo.setImageResource(R.mipmap.video_unselect);
+        mvNavigation.setImageResource(R.mipmap.navigation_unselect);
+        mvWeather.setImageResource(R.mipmap.weather_unselect);
     }
 
 
@@ -329,7 +283,6 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPageSelected(int position) {
         setMenuSelector(position);
@@ -352,7 +305,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     /**
      * 设置recyclerview item参数
      */
-    private void setList(){
+    private void setList() {
         list.add("会员注册");
         list.add("会员中心");
         list.add("音乐播放器");
@@ -366,5 +319,29 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @OnClick({R.id.civ_portrait, R.id.iv_weather_search, R.id.mv_music, R.id.mv_video, R.id.mv_navigation, R.id.mv_weather})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.civ_portrait:
+                mSlidingMenu.toggle();
+                break;
+            case R.id.iv_weather_search:
+                startActivity(new Intent(this, SearchWeatherActivity.class));
+                break;
+            case R.id.mv_music:
+                setMenuSelector(0);
+                break;
+            case R.id.mv_video:
+                setMenuSelector(1);
+                break;
+            case R.id.mv_navigation:
+                setMenuSelector(2);
+                break;
+            case R.id.mv_weather:
+                setMenuSelector(3);
+                break;
+        }
     }
 }

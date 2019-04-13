@@ -2,23 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="#FFFFFF"
-    >
+    android:background="#FFFFFF">
 
     <TextView
         android:id="@+id/tv_start"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginRight="50dp"
-        android:background="@drawable/item_selected_changecolor"/>
+        android:background="@drawable/item_selected_changecolor" />
 
     <ImageView
-        android:id="@+id/image_01"
+        android:id="@+id/image_music_logo"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:src="@mipmap/music_logo" />
+        android:layout_marginTop="5dp" />
 
     <RelativeLayout
         android:id="@+id/rl_songmessage"
@@ -34,15 +32,15 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:text="歌名*********"
-            android:textColor="#000000" />
+            android:textColor="@color/item_song" />
 
         <TextView
             android:id="@+id/item_mymusic_singer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_mymusic_song"
-            android:textColor="#6B6B6B"
-            android:text="歌手" />
+            android:text="歌手"
+            android:textColor="@color/item_singer_and_time" />
 
         <TextView
             android:id="@+id/item_mymusic_duration"
@@ -51,8 +49,8 @@
             android:layout_below="@+id/item_mymusic_song"
             android:layout_marginLeft="15dp"
             android:layout_toRightOf="@+id/item_mymusic_singer"
-            android:textColor="#6B6B6B"
-            android:text="时间" />
+            android:text="时间"
+            android:textColor="@color/item_singer_and_time" />
 
 
     </RelativeLayout>
@@ -63,18 +61,17 @@
         android:layout_height="50dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="20dp"
-        android:src="@mipmap/code"
-        android:background="@drawable/item_selected_changecolor"/>
+        android:layout_marginRight="30dp"
+        android:src="@drawable/item_details_pressed" />
 
     <View
         android:id="@+id/view2"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_below="@id/image_01"
-        android:layout_marginTop="4dp"
+        android:layout_below="@id/iv_item_code"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="4dp"
         android:background="#D3D3D3">
 
     </View>

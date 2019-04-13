@@ -16,24 +16,24 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="30dp"
-            android:src="@mipmap/lyrics_back"
             android:layout_marginStart="10dp"
-            android:background="@drawable/lyrics_btn_color"/>
+            android:layout_marginTop="30dp"
+            android:background="@drawable/lyrics_btn_color"
+            android:src="@mipmap/lyrics_back" />
 
         <TextView
             android:id="@+id/tv_lyrics_song"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="25dp"
+            android:layout_toEndOf="@+id/iv_lyrics_back"
             android:layout_toRightOf="@+id/iv_lyrics_back"
             android:singleLine="true"
             android:text="暂无歌曲"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@+id/iv_lyrics_back" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tv_lyrics_singer"
@@ -41,26 +41,26 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_lyrics_song"
             android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/iv_lyrics_back"
             android:layout_toRightOf="@+id/iv_lyrics_back"
             android:singleLine="true"
             android:text="歌手名**"
-            android:textColor="#FFFFFF"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@+id/iv_lyrics_back" />
+            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 
-    <LinearLayout
+    <com.example.biao.multifunction.lrcviewlib.LrcView
+        android:id="@+id/lv_lyrics"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1" />
+    <!--<com.example.biao.multifunction.definedview.LrcView-->
+    <!--android:id="@+id/lv_lyrics"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1" />-->
 
-        <com.example.biao.multifunction.definedview.LrcView
-            android:id="@+id/lv_lyrics"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -69,66 +69,68 @@
 
         <TextView
             android:id="@+id/tv_lyrics_alltime"
-            android:gravity="center"
-            android:layout_marginLeft="3dp"
-            android:layout_marginTop="4dp"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
             android:text="总时长"
-            android:layout_marginStart="3dp" />
+            android:textSize="12sp" />
+
         <SeekBar
             android:id="@+id/sb_lyrics"
-            android:layout_toRightOf="@+id/tv_left_itemtext"
-            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/tv_left_itemtext" />
+
         <TextView
             android:id="@+id/tv_lyrics_playtime"
-            android:gravity="center"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="4dp"
-            android:layout_alignParentRight="true"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="放时长"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_marginEnd="3dp"
-            android:layout_alignParentEnd="true" />
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="放时长"
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/iv_lyrics_last"
-            android:layout_marginTop="20dp"
-            android:layout_toLeftOf="@+id/iv_lyrics_startandpause"
-            android:layout_marginRight="20dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@mipmap/last"
-            android:layout_toStartOf="@+id/iv_lyrics_startandpause"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/lyrics_btn_color"/>
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/iv_lyrics_startandpause"
+            android:layout_toStartOf="@+id/iv_lyrics_startandpause"
+            android:background="@drawable/lyrics_btn_color"
+            android:src="@mipmap/last" />
 
         <ImageView
             android:id="@+id/iv_lyrics_startandpause"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@mipmap/start"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:src="@mipmap/start" />
 
         <ImageView
             android:id="@+id/iv_lyrics_next"
-            android:layout_marginTop="20dp"
-            android:layout_toRightOf="@+id/iv_lyrics_startandpause"
-            android:layout_marginLeft="20dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@mipmap/next"
-            android:layout_toEndOf="@+id/iv_lyrics_startandpause"
+            android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
-            android:background="@drawable/lyrics_btn_color"/>
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@+id/iv_lyrics_startandpause"
+            android:layout_toRightOf="@+id/iv_lyrics_startandpause"
+            android:background="@drawable/lyrics_btn_color"
+            android:src="@mipmap/next" />
 
     </RelativeLayout>
 

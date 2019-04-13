@@ -8,7 +8,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#DDDDDD"/>
+        android:background="#DDDDDD" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,6 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onViewClicked"
             android:paddingTop="4dp"
             custom:imgHeight="30dp"
             custom:img_and_text_distance="5dp"
@@ -33,6 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onViewClicked"
             android:paddingTop="8dp"
             custom:imgHeight="22dp"
             custom:imgWidth="28dp"
@@ -47,6 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onViewClicked"
             android:paddingTop="7dp"
             custom:imgHeight="25dp"
             custom:imgWidth="25dp"
@@ -61,6 +64,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:onClick="onViewClicked"
             android:paddingTop="9dp"
             custom:imgHeight="20dp"
             custom:imgWidth="35dp"

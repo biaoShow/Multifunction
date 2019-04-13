@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.biao.multifunction">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--//网络权限，当禁用后，无法进行检索等相关业务-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!--//读取设备硬件信息，统计数据-->
@@ -19,8 +19,8 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <!--//鉴权所需该权限获取进程列表-->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -30,11 +30,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data android:name="com.baidu.lbsapi.API_KEY"
-            android:value="irumO2RYYOCViGDG9qHORM5mpAZ5GPUS"/>
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="irumO2RYYOCViGDG9qHORM5mpAZ5GPUS" />
+
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,16 +50,18 @@
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".activity.LyricsActivit"/>
-        <activity android:name=".activity.SearchWeatherActivity"/>
-        <activity android:name=".activity.PlayActivity"
-            android:screenOrientation="landscape"/>
-        <service android:name=".service.MusicService"/>
-        <receiver android:name=".activity.LyricsActivit$MusicReceiver"/>
+        <activity android:name=".activity.LyricsActivit" />
+        <activity android:name=".activity.SearchWeatherActivity" />
+        <activity
+            android:name=".activity.PlayActivity"
+            android:screenOrientation="landscape" />
+
+        <service android:name=".service.MusicService" />
+        <receiver android:name=".activity.LyricsActivit$MusicReceiver" />
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" >
+            android:process=":remote">
             <intent-filter>
                 <action android:name="com.baidu.location.service_v2.2">
 

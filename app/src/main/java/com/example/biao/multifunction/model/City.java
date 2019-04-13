@@ -1,10 +1,12 @@
 package com.example.biao.multifunction.model;
 
+import com.litesuits.orm.db.annotation.Table;
+
 /**
  * 天气预报中市级实体类
  * Created by biao on 2018/5/15.
  */
-
+@Table("City")
 public class City {
     private int id;
     private String cityName;
