@@ -101,6 +101,16 @@
             android:textSize="12sp" />
 
         <ImageView
+            android:id="@+id/iv_play_pattern"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/sb_lyrics"
+            android:layout_marginLeft="40dp"
+            android:onClick="onViewClickedLrc"
+            android:padding="9dp"
+            android:src="@mipmap/circulation" />
+
+        <ImageView
             android:id="@+id/iv_lyrics_last"
             android:layout_width="40dp"
             android:layout_height="40dp"

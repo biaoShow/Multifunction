@@ -23,6 +23,7 @@ import com.example.biao.multifunction.model.Song;
 import com.example.biao.multifunction.service.MusicService;
 import com.example.biao.multifunction.util.GetLocalVieoInfo;
 import com.example.biao.multifunction.util.MusicUtils;
+import com.example.biao.multifunction.util.MyApplication;
 import com.example.biao.multifunction.util.OnClickMusicCodeItemLisener;
 import com.example.biao.multifunction.util.OnClickMusicitemLisener;
 import com.example.biao.multifunction.util.SharedPreferencesUtil;
@@ -41,7 +42,7 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private LayoutInflater mLayout;
     private OnClickMusicitemLisener onClickMusicitemLisener;
     private OnClickMusicCodeItemLisener onClickMusicCodeItemLisener;
-    private int mLastPosition = -1;
+    private String playSong = "";
     private MusicReceiver musicReceiver;
 
     public MusicFragmentRVAdapter(Context context, List<Song> list) {
@@ -88,8 +89,10 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String strTime = MusicUtils.formatTime(time);
         ((MyViewHolder) holder).item_mymusic_duration.setText(strTime);
 
-        mLastPosition = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_POSITION);
-        if (position == mLastPosition) {
+        playSong = SharedPreferencesUtil.getIntent(context).getString(PreferencesKep.PLAY_SONG);
+        int playDuration = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_DURATION);
+        int playPosition = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_POSITION);
+        if (list.get(position).getSong().equals(playSong) && list.get(position).getDuration() == playDuration && playPosition == position) {
             ((MyViewHolder) holder).item_mymusic_song.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
             ((MyViewHolder) holder).item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
             ((MyViewHolder) holder).item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
@@ -126,6 +129,10 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.onClickMusicCodeItemLisener = onClickMusicCodeItemLisener;
     }
 
+    public void setList(List<Song> list) {
+        this.list = list;
+    }
+
     @Override
     public int getItemCount() {
         return list.size();
@@ -155,8 +162,7 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         @Override
         public void onReceive(Context context, Intent intent) {
             int play_position = intent.getIntExtra("play_position", 0);
-            int old_play_position = SharedPreferencesUtil.getIntent(context).getInt("play_position");
-            SharedPreferencesUtil.getIntent(context).putInt("play_position", play_position);
+            int old_play_position = intent.getIntExtra("old_play_position", 0);
             notifyItemChanged(old_play_position);
             notifyItemChanged(play_position);
 //            notifyDataSetChanged();

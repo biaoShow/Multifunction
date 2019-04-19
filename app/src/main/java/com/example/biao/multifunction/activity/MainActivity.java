@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +82,8 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     private List<String> list = new ArrayList<>();
     private TextView tv_back;
 
+    private int nowType = 0;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,6 +130,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         if (isFirst) {
             viewPager.setAdapter(fragmentAdapter);
             setMenuSelector(0);
+            isFirst = false;
         }
 
         //左菜单栏控件初始化
@@ -216,13 +220,14 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
      * @param index 选择到的项目
      */
     private void setMenuSelector(int index) {
+        nowType = index;
         reSetSelected();
         resetTextColor();
         myViews.get(index).setTextColor(0xff0493f9);
         if (index == 0) {
             mvMusic.setImageResource(R.mipmap.selectedmusic);
             tvTitle.setText("音乐");
-            ivWeatherSearch.setVisibility(View.GONE);
+            ivWeatherSearch.setVisibility(View.VISIBLE);
         } else if (index == 1) {
             mvVideo.setImageResource(R.mipmap.video_selected);
             tvTitle.setText("视频");
@@ -328,7 +333,11 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
                 mSlidingMenu.toggle();
                 break;
             case R.id.iv_weather_search:
-                startActivity(new Intent(this, SearchWeatherActivity.class));
+                if (nowType == 3) {
+                    startActivity(new Intent(this, SearchWeatherActivity.class));
+                } else if (nowType == 0) {
+                    musicFragment.setSearchView();
+                }
                 break;
             case R.id.mv_music:
                 setMenuSelector(0);

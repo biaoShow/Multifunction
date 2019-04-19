@@ -1,6 +1,7 @@
 package com.example.biao.multifunction.fragment;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,13 +16,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.biao.multifunction.R;
@@ -39,8 +47,14 @@ import com.example.biao.multifunction.util.OnClickMusicCodeItemLisener;
 import com.example.biao.multifunction.util.OnClickMusicitemLisener;
 import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * 音乐播放功能fragment
@@ -49,6 +63,13 @@ import java.util.Map;
 
 public class MusicFragment extends Fragment implements View.OnClickListener {
 
+    @BindView(R.id.tv_search_cancel)
+    TextView tvSearchCancel;
+    @BindView(R.id.ll_search)
+    LinearLayout llSearch;
+    Unbinder unbinder;
+    @BindView(R.id.et_search)
+    EditText etSearch;
     private List<Song> list;//获取歌单
     private Map<String, Integer> letterMap;//获取歌单
     private MusicFragmentRVAdapter musicFragmentRVAdapter = null;//fragment适配器
@@ -65,6 +86,10 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
     //创建一个服务连接对象
     private ServiceConnection connection;
 
+    private SharedPreferencesUtil sharedPreferencesUtil;
+    private List<Song> searchSongList = new ArrayList<>();
+    private boolean isfrist = true;//判断是否第一次进入
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +98,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
 
         //加载适配器
         musicFragmentRVAdapter = new MusicFragmentRVAdapter(MyApplication.getContext(), list);
+        sharedPreferencesUtil = SharedPreferencesUtil.getIntent(getActivity());
 
         //绑定播放服务
         intent = new Intent(MyApplication.getContext(), MusicService.class);
@@ -124,14 +150,16 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
         MyApplication.getContext().startService(intent);
         MyApplication.getContext().bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(MyApplication.getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(musicFragmentRVAdapter);
-        recyclerView.scrollToPosition(SharedPreferencesUtil.getIntent(MyApplication.getContext()).getInt(PreferencesKep.PLAY_POSITION) - 4);
+        scrollToPosition(MusicUtils.songGetListPosition(list, sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG),
+                sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION)), "first");
 
         iv_play_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recyclerView.scrollToPosition(SharedPreferencesUtil.getIntent(MyApplication.getContext()).getInt(PreferencesKep.PLAY_POSITION));
+                scrollToPosition(MusicUtils.songGetListPosition(list, sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG),
+                        sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION)), "location");
             }
         });
 
@@ -153,6 +181,60 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
 
         //设置监听事件
         civ_music.setOnClickListener(this);
+        unbinder = ButterKnife.bind(this, view);
+
+        //监听是否获取焦点
+        etSearch.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    // 获得焦点
+//                    showOrHide(getContext());
+                    show_keyboard_from(getContext(), v);
+                } else {
+                    // 失去焦点
+                    hide_keyboard_from(getContext(), v);
+                }
+            }
+        });
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.i("TextChangedListener", "onTextChanged");
+                List<Song> searchList = new ArrayList<>();//搜索到的歌单
+                List<Song> songList = MusicUtils.getMusicData(getContext());//先刷新一下全部歌单
+                String searchChar = s.toString();//输入的内容
+                if (!"".equals(searchChar)) {
+                    if (songList.size() > 0) {
+                        for (Song song : songList) {
+                            if (song.getSong().contains(searchChar) || song.getSinger().contains(searchChar)) {
+                                searchList.add(song);
+                            }
+                        }
+                    }
+                } else {
+                    searchList.addAll(songList);
+                }
+                musicFragmentRVAdapter.setList(searchList);
+                musicBinder.setList(searchList);
+                searchSongList = searchList;
+                sharedPreferencesUtil.putInt(PreferencesKep.PLAY_POSITION, MusicUtils.songGetListPosition(
+                        searchList, sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG),
+                        sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION)));//歌曲列表改变同时记录播放的Position也要改变
+                musicFragmentRVAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.i("TextChangedListener", "afterTextChanged");
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.i("TextChangedListener", "beforeTextChanged");
+            }
+        });
         return view;
     }
 
@@ -164,6 +246,12 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
                 recyclerView.scrollToPosition(letterMap.get(s));
             }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        musicFragmentRVAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -180,8 +268,10 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
-        if (musicBinder.isPlaying()) {
-            objectAnimator.pause();
+        if (musicBinder != null) {
+            if (musicBinder.isPlaying()) {
+                objectAnimator.pause();
+            }
         }
     }
 
@@ -202,6 +292,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
         if (null != rotateBroadcast) {
             getActivity().unregisterReceiver(rotateBroadcast);
         }
+        unbinder.unbind();
     }
 
     @Override
@@ -211,6 +302,54 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
         list.clear();
         MyApplication.getContext().unbindService(connection);//解绑服务
         Log.i("MusicFragment", "----------onDestroy----------");
+    }
+
+    /**
+     * reccleview活动到指定的位置
+     */
+    public void scrollToPosition(int position, String type) {
+        int firstItem, lastItem;
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        int height = wm.getDefaultDisplay().getHeight();
+        int toY = -((height - dip2px(getActivity(), 130)) / 2);
+        recyclerView.scrollToPosition(position);
+        //拿到当前屏幕可见的第一个position跟最后一个postion
+        if (type.equals("first") && position < (list.size() - 9)) {
+            if (isfrist) {
+                recyclerView.smoothScrollBy(0, toY);
+                isfrist = false;
+            }
+        } else if (type.equals("location")) {
+            firstItem = recyclerView.getChildLayoutPosition(recyclerView.getChildAt(0));
+            lastItem = recyclerView.getChildLayoutPosition(recyclerView.getChildAt(recyclerView.getChildCount() - 1));
+            if (lastItem < position || position < firstItem) {
+                if (lastItem < position) {
+                    toY = -toY;
+                }
+                recyclerView.smoothScrollBy(0, toY);
+            }
+        } else if (type.equals("cancel")) {
+            lastItem = recyclerView.getChildLayoutPosition(recyclerView.getChildAt(recyclerView.getChildCount() - 1));
+            if (lastItem == -1 && position < (list.size() - 9)) {
+                recyclerView.smoothScrollBy(0, toY);
+                return;
+            }
+            if (position > 9 && position > lastItem) {
+                recyclerView.smoothScrollBy(0, -(toY + 200));
+            }
+        }
+    }
+
+    /**
+     * 根据手机分辨率从DP转成PX
+     *
+     * @param context
+     * @param dpValue
+     * @return
+     */
+    private int dip2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 
     /**
@@ -228,10 +367,10 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
      * @param position 歌单List下标
      */
     private void showDialog(int position) {
-        MusicCodeDialog selectDialog = new MusicCodeDialog(getActivity(), position);
+        MusicCodeDialog selectDialog = new MusicCodeDialog(getActivity(), position, searchSongList);
         selectDialog.show();
         //获取对话框当前的参数值
-        android.view.WindowManager.LayoutParams p = selectDialog.getWindow().getAttributes();
+        WindowManager.LayoutParams p = selectDialog.getWindow().getAttributes();
 //        p.height = 900; //高度设置
 //        p.width = 950; //宽度设置
         //设置弹出透明底色，解决直角问题
@@ -263,6 +402,37 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
     }
 
     /**
+     * 设置搜索view的显示
+     */
+    public void setSearchView() {
+        llSearch.setVisibility(View.VISIBLE);
+        etSearch.setFocusable(true);
+        etSearch.setFocusableInTouchMode(true);
+        etSearch.requestFocus();
+    }
+
+    @OnClick({R.id.tv_search_cancel, R.id.ll_search})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_search_cancel:
+                llSearch.setVisibility(View.GONE);
+                etSearch.setText("");
+                list = MusicUtils.getMusicData(getActivity());
+                musicFragmentRVAdapter.setList(list);
+                musicBinder.setList(list);
+                musicFragmentRVAdapter.notifyDataSetChanged();
+                int getListPosition = MusicUtils.songGetListPosition(list, sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG),
+                        sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION));
+                sharedPreferencesUtil.putInt(PreferencesKep.PLAY_POSITION, getListPosition);
+                scrollToPosition(getListPosition, "cancel");
+                musicBinder.setPlayPosition(getListPosition);
+                break;
+            case R.id.ll_search:
+                break;
+        }
+    }
+
+    /**
      * 接收播放暂停或者停止的状态广播
      */
     class RotateBroadcast extends BroadcastReceiver {
@@ -287,5 +457,33 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
+    /**
+     * 隐藏键盘
+     *
+     * @param context
+     * @param view
+     */
+    public void hide_keyboard_from(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    /**
+     * 显示键盘
+     *
+     * @param context
+     * @param view
+     */
+    public void show_keyboard_from(Context context, View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+    //如果输入法在窗口上已经显示，则隐藏，反之则显示
+//    public static void showOrHide(Context context) {
+//        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+
+//    }
 
 }

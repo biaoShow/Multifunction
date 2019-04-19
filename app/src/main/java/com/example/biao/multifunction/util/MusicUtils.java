@@ -274,4 +274,14 @@ public class MusicUtils {
         return bm;
     }
 
+    public static int songGetListPosition(List<Song> list, String song, int duration) {
+        int position = -1;
+        for (int i = 0; i < list.size(); i++) {
+            if (song.equals(list.get(i).getSong()) && list.get(i).getDuration() == duration) {
+                position = i;
+            }
+        }
+        return position;
+    }
+
 }

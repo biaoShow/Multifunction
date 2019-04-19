@@ -26,11 +26,11 @@ public class MusicCodeDialog extends Dialog {
     private TextView tv_dialog_song, tv_dialog_singer, tv_dialog_duration,
             tv_dialog_size, tv_dialog_path, tv_dialog_close;
 
-    public MusicCodeDialog(@NonNull Context context, int position) {
+    public MusicCodeDialog(@NonNull Context context, int position, List<Song> list) {
         super(context);
         this.context = context;
         this.position = position;
-        this.list = MusicUtils.getMusicData(context);
+        this.list = list;
     }
 
     @Override
@@ -70,4 +70,5 @@ public class MusicCodeDialog extends Dialog {
         tv_dialog_size.setText(MusicUtils.formatSize(list.get(position).getSize()) + " m");
         tv_dialog_path.setText(MusicUtils.getFilePath(list.get(position).getPath()));
     }
+
 }

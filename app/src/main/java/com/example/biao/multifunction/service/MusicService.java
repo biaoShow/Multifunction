@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.biao.multifunction.model.PreferencesKep;
+import com.example.biao.multifunction.model.PublicFinalModel;
 import com.example.biao.multifunction.model.Song;
 import com.example.biao.multifunction.util.MusicUtils;
 import com.example.biao.multifunction.util.MyApplication;
@@ -16,6 +17,7 @@ import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * 音乐控制服务类
@@ -24,11 +26,12 @@ import java.util.List;
 
 public class MusicService extends Service {
 
-    List<Song> list;
-    public int playPosition = SharedPreferencesUtil.getIntent(this).getInt(PreferencesKep.PLAY_POSITION);
+    private List<Song> list;
+    private SharedPreferencesUtil sharedPreferencesUtil;
+    public int playPosition;
     boolean isFrist = true;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
-    private MusicBinder musicBinder = new MusicBinder();
+    private MediaPlayer mediaPlayer;
+    private MusicBinder musicBinder;
     public static final int START = 0;
     public static final int PAUSE = 1;
     public static final int RESUME = 2;
@@ -37,6 +40,10 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
         list = MusicUtils.getMusicData(this);
+        sharedPreferencesUtil = SharedPreferencesUtil.getIntent(this);
+        playPosition = sharedPreferencesUtil.getInt(PreferencesKep.PLAY_POSITION);
+        mediaPlayer = new MediaPlayer();
+        musicBinder = new MusicBinder();
         if (list.size() > 0) {
             try {
                 mediaPlayer.setDataSource(list.get(0).getPath());
@@ -44,6 +51,13 @@ public class MusicService extends Service {
                 e.printStackTrace();
             }
         }
+        //监听播放是否完成，完成自动播放下一首
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                musicBinder.next();
+            }
+        });
     }
 
     @Nullable
@@ -76,21 +90,13 @@ public class MusicService extends Service {
                     public void onPrepared(MediaPlayer mediaPlayer) {
                         mediaPlayer.start();//开始音频
                         sendBroadcast(START);
-                        musicBroadcast(position);
+                        musicBroadcast(sharedPreferencesUtil.getInt(PreferencesKep.PLAY_POSITION), position);
+                        savePreferences();
                     }
                 });
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            //监听播放是否完成，完成自动播放下一首
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    next();
-                }
-            });
-
         }
 
 
@@ -115,36 +121,28 @@ public class MusicService extends Service {
          * 下一首
          */
         public void next() {
-            if (playPosition == (list.size() - 1)) {
-                play(0);
-            } else {
-                play(playPosition + 1);
-            }
+            play(getAfterPlayPosition("next"));
         }
 
         /**
          * 上一首
          */
         public void last() {
-            if (playPosition == 0) {
-                play(list.size() - 1);
-            } else {
-                play(playPosition - 1);
-            }
+            play(getAfterPlayPosition("last"));
         }
-
-        /**
-         * 获取歌曲长度
-         *
-         * @return
-         */
-        public int getPlayDuration() {
-            int rtn = 0;
-            if (mediaPlayer != null) {
-                rtn = list.get(playPosition).getDuration();
-            }
-            return rtn;
-        }
+//
+//        /**
+//         * 获取歌曲长度
+//         *
+//         * @return
+//         */
+//        public int getPlayDuration() {
+//            int rtn = 0;
+//            if (mediaPlayer != null) {
+//                rtn = list.get(playPosition).getDuration();
+//            }
+//            return rtn;
+//        }
 
 
         /**
@@ -171,27 +169,27 @@ public class MusicService extends Service {
                 mediaPlayer.seekTo(position);
             }
         }
+//
+//        /**
+//         * 获取播放歌曲名称
+//         *
+//         * @return
+//         */
+//        public String getPlaySong() {
+//            if (list.size() > 0) {
+//                return list.get(playPosition).getSong();
+//            }
+//            return null;
+//        }
 
-        /**
-         * 获取播放歌曲名称
-         *
-         * @return
-         */
-        public String getPlaySong() {
-            if (list.size() > 0) {
-                return list.get(playPosition).getSong();
-            }
-            return null;
-        }
-
-        /**
-         * 获取播放歌曲歌手
-         *
-         * @return
-         */
-        public String getPlaySinger() {
-            return list.get(playPosition).getSinger();
-        }
+//        /**
+//         * 获取播放歌曲歌手
+//         *
+//         * @return
+//         */
+//        public String getPlaySinger() {
+//            return list.get(playPosition).getSinger();
+//        }
 
         /**
          * 判断歌曲是否在播放
@@ -201,6 +199,56 @@ public class MusicService extends Service {
         public boolean isPlaying() {
             return mediaPlayer.isPlaying();
         }
+
+        public void setList(List<Song> list) {
+            setListSong(list);
+        }
+
+        public void setPlayPosition(int position) {
+            setThisPlayPosition(position);
+        }
+
+    }
+
+    /**
+     * 设置歌单
+     *
+     * @param list
+     */
+    private void setListSong(List<Song> list) {
+        this.list = list;
+    }
+
+    private void setThisPlayPosition(int position) {
+        this.playPosition = position;
+    }
+
+    private int getAfterPlayPosition(String type) {
+        int playPattern = sharedPreferencesUtil.getInt(PreferencesKep.PLAY_PATTERN);
+        int afterPlayPosition = playPosition;
+        switch (playPattern) {
+            case PublicFinalModel.PLAY_SINGLE:
+                break;
+            case PublicFinalModel.PLAY_RANDOM:
+                afterPlayPosition = new Random().nextInt(list.size());
+                break;
+            case PublicFinalModel.PLAY_CIRCULATION:
+                if (type.equals("next")) {
+                    if (afterPlayPosition == (list.size() - 1)) {
+                        afterPlayPosition = 0;
+                    } else {
+                        afterPlayPosition += 1;
+                    }
+                } else if (type.equals("last")) {
+                    if (afterPlayPosition == 0) {
+                        afterPlayPosition = (list.size() - 1);
+                    } else {
+                        afterPlayPosition -= 1;
+                    }
+                }
+                break;
+        }
+        return afterPlayPosition;
     }
 
     /**
@@ -215,11 +263,27 @@ public class MusicService extends Service {
         sendBroadcast(intent);
     }
 
-    private void musicBroadcast(int position) {
+    private void musicBroadcast(int oldPosition, int position) {
         //发送广播通知SecodActivity UI更新
+//        if (!list.get(oldPosition).getSong().equals(sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG))) {
+//            oldPosition = MusicUtils.songGetListPosition(list, sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG),
+//                    sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION));
+//        }
         Intent intent = new Intent("com.example.biao.service.UPDATEUI");
         intent.putExtra("play_position", position);
+        intent.putExtra("old_play_position", oldPosition);
         intent.putExtra("playsong", list.get(position));
         sendBroadcast(intent);
+    }
+
+    /**
+     * 保存播放歌曲的信息
+     */
+    private void savePreferences() {
+        Song song = list.get(playPosition);
+        sharedPreferencesUtil.putString(PreferencesKep.PLAY_SONG, song.getSong());
+        sharedPreferencesUtil.putString(PreferencesKep.PLAY_SINGER, song.getSinger());
+        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_POSITION, playPosition);
+        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_DURATION, song.getDuration());
     }
 }

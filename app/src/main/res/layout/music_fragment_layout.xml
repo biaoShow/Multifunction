@@ -4,27 +4,82 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/search_ll_bg"
+        android:gravity="center"
+        android:onClick="onViewClicked"
+        android:orientation="horizontal"
+        android:paddingBottom="14dp"
+        android:paddingLeft="25dp"
+        android:paddingTop="14dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:background="@drawable/music_secrch_bg"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@mipmap/music_search" />
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="9"
+                android:background="@null"
+                android:hint="请输入歌曲名或歌手名"
+                android:textColorHint="#BBBBBB"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_search_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="onViewClicked"
+            android:text="取消"
+            android:textColor="@color/search_cancel" />
+
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/musicfragment_recycerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:layout_below="@+id/ll_search"
+        android:scrollbars="vertical" />
+
     <com.example.biao.multifunction.definedview.SideBar
         android:id="@+id/sideBar"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
+
     <TextView
         android:id="@+id/tv_hint"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:gravity="center"
         android:background="@drawable/bg_sidebar_press"
+        android:gravity="center"
         android:textColor="@drawable/sidebar_select_letter"
-        android:visibility="gone"
-        android:textSize="30dp"/>
+        android:textSize="30dp"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/iv_play_location"
         android:layout_width="25dp"
@@ -32,16 +87,17 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="10dp"
-        android:src="@drawable/play_location"
-        android:layout_toLeftOf="@+id/civ_music"/>
+        android:layout_toLeftOf="@+id/civ_music"
+        android:src="@drawable/play_location" />
+
     <com.example.biao.multifunction.definedview.CircleImageView
         android:id="@+id/civ_music"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="25dp"
-        android:layout_marginBottom="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="25dp"
         custom:radius="25dp"
         custom:src="@mipmap/action_to_lyrics" />
 

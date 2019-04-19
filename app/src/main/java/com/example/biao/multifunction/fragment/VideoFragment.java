@@ -34,19 +34,19 @@ public class VideoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.video_fragment_layout,container,false);
+        View view = inflater.inflate(R.layout.video_fragment_layout, container, false);
 
         list = GetLocalVieoInfo.getVideoFromSDCard(getActivity());
         rv_Video_line = view.findViewById(R.id.rv_Video_line);
-        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(),list);
+        recyclerViewAdapter = new RecyclerViewAdapter(getActivity(), list);
         rv_Video_line.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_Video_line.setAdapter(recyclerViewAdapter);
 
         recyclerViewAdapter.setItemOnClick(new RecyclerViewItemOnClickListener() {
             @Override
             public void onClickItem(int position) {
-                Intent intent = new Intent(getActivity(),PlayActivity.class);
-                intent.putExtra("playPath",list.get(position).getPath());
+                Intent intent = new Intent(getActivity(), PlayActivity.class);
+                intent.putExtra("playPath", list.get(position).getPath());
                 getActivity().startActivity(intent);
             }
         });

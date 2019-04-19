@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,10 +30,14 @@ import com.example.biao.multifunction.lrcviewlib.LrcDataBuilder;
 import com.example.biao.multifunction.lrcviewlib.LrcRow;
 import com.example.biao.multifunction.lrcviewlib.LrcView;
 import com.example.biao.multifunction.model.LyricsObjct;
+import com.example.biao.multifunction.model.PreferencesKep;
+import com.example.biao.multifunction.model.PublicFinalModel;
 import com.example.biao.multifunction.model.Song;
 import com.example.biao.multifunction.model.SongNameGetLyrics;
+import com.example.biao.multifunction.popwindows.MyPopWindows;
 import com.example.biao.multifunction.service.MusicService;
 import com.example.biao.multifunction.util.MusicUtils;
+import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -47,6 +53,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DefaultObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -65,8 +74,11 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
         }
     };
     List<LyricsObjct> lyricsObjcts = new ArrayList<>();//歌词对象（一行歌词封装一个对象）
+    @BindView(R.id.iv_play_pattern)
+    ImageView ivPlayPattern;
     private LrcView lv_lyrics;
-    protected String splaySong;//播放歌曲名称
+    protected String splaySong, splaySongSinger;//播放歌曲名称
+    protected int splaySongDuration;//播放歌曲名称
     private boolean isCirculation = true;//歌词跟进度条更新判断（activity启动时开始，结束时停止）
 
     private List<Song> list = new ArrayList<>();//歌曲对象列表
@@ -76,6 +88,9 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
     private SeekBar sb_lyrics;
     private MusicReceiver musicReceiver;//服务对象、
 
+    private SharedPreferencesUtil sharedPreferencesUtil;
+    private MyPopWindows myPopWindows;
+
 //    private LrcView
 
     //创建一个service连接对象，并定义好连接时所执行的任务（耗时的需要在子线程执行）
@@ -83,12 +98,15 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             musicBinder = (MusicService.MusicBinder) service;
-            splaySong = musicBinder.getPlaySong();
+//            splaySong = musicBinder.getPlaySong();
+            splaySong = sharedPreferencesUtil.getString(PreferencesKep.PLAY_SONG);
+            splaySongSinger = sharedPreferencesUtil.getString(PreferencesKep.PLAY_SINGER);
+            splaySongDuration = sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION);
             //歌单非空判断
             if (list.size() == 0) {
                 list = MusicUtils.getMusicData(LyricsActivit.this);
             }
-            upDateUI(musicBinder.getPlayDuration(), musicBinder.getPlaySong(), musicBinder.getPlaySinger());
+            upDateUI(splaySongDuration, splaySong, splaySongSinger);
             //开启子线程持续更新进度条和播放时间(500毫秒更新一次)
             new Thread() {
                 @Override
@@ -125,6 +143,7 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_lyrics_layout);
+        ButterKnife.bind(this);
 
         //沉浸效果
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -135,7 +154,12 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
             window.setStatusBarColor(Color.TRANSPARENT);
             window.setNavigationBarColor(Color.BLACK);
         }
+        initView();
+        initData();
+        initLrcView();
+    }
 
+    private void initView() {
         //初始化控件
         tv_lyrics_song = findViewById(R.id.tv_lyrics_song);
         tv_lyrics_singer = findViewById(R.id.tv_lyrics_singer);
@@ -148,7 +172,49 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
         iv_lyrics_next = findViewById(R.id.iv_lyrics_next);
         lv_lyrics = findViewById(R.id.lv_lyrics);
 
+        //控件监听
+        iv_lyrics_back.setOnClickListener(this);
+        iv_lyrics_startandpause.setOnClickListener(this);
+        iv_lyrics_last.setOnClickListener(this);
+        iv_lyrics_next.setOnClickListener(this);
+    }
+
+    private void initData() {
         lv_lyrics.setAnimation(AnimationUtils.loadAnimation(LyricsActivit.this, R.anim.animation_lyrics_activity));//歌词加载动画
+
+        sharedPreferencesUtil = SharedPreferencesUtil.getIntent(this);
+        myPopWindows = new MyPopWindows(this);
+        switch (sharedPreferencesUtil.getInt(PreferencesKep.PLAY_PATTERN)) {
+            case PublicFinalModel.PLAY_CIRCULATION:
+                ivPlayPattern.setImageResource(R.mipmap.circulation);
+                break;
+            case PublicFinalModel.PLAY_RANDOM:
+                ivPlayPattern.setImageResource(R.mipmap.random);
+                break;
+            case PublicFinalModel.PLAY_SINGLE:
+                ivPlayPattern.setImageResource(R.mipmap.single);
+                break;
+        }
+        myPopWindows.setOnItemClickListener(new MyPopWindows.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v) {
+                myPopWindows.dismiss();
+                switch (v.getId()) {
+                    case R.id.ll_circulation:
+                        ivPlayPattern.setImageResource(R.mipmap.circulation);
+                        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_PATTERN, PublicFinalModel.PLAY_CIRCULATION);
+                        break;
+                    case R.id.ll_random:
+                        ivPlayPattern.setImageResource(R.mipmap.random);
+                        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_PATTERN, PublicFinalModel.PLAY_RANDOM);
+                        break;
+                    case R.id.ll_single:
+                        ivPlayPattern.setImageResource(R.mipmap.single);
+                        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_PATTERN, PublicFinalModel.PLAY_SINGLE);
+                        break;
+                }
+            }
+        });
 
         //绑定MusicService
         Intent intent = new Intent(this, MusicService.class);
@@ -159,9 +225,6 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.example.biao.service.UPDATEUI");
         registerReceiver(musicReceiver, intentFilter);
-
-        initLrcView();
-
         //进度条监听
         sb_lyrics.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -180,13 +243,6 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
                 musicBinder.seekTo(progress);
             }
         });
-
-        //控件监听
-        iv_lyrics_back.setOnClickListener(this);
-        iv_lyrics_startandpause.setOnClickListener(this);
-        iv_lyrics_last.setOnClickListener(this);
-        iv_lyrics_next.setOnClickListener(this);
-
     }
 
     /**
@@ -262,6 +318,13 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
         isCirculation = false;
     }
 
+    @OnClick(R.id.iv_play_pattern)
+    public void onViewClickedLrc(View view) {
+        myPopWindows.showMyPopWindows(view);
+//        myPopWindows.showAtLocation(view,
+//                Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+    }
+
     /**
      * 广播接受器
      */
@@ -313,32 +376,32 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
 //        lv_lyrics.setmLrcList(lyricsObjcts);
     }
 
-    /**
-     * 根据时间获取歌词显示的索引值
-     *
-     * @return 返回高亮的歌词索引值
-     */
-    public int lrcIndex() {
-        int index = 0;
-        int currentTime = musicBinder.getPlayCurrentPosition();
-        int duration = musicBinder.getPlayDuration();
-        if (currentTime < duration) {
-            for (int i = 0; i < lyricsObjcts.size(); i++) {
-                if (i < lyricsObjcts.size() - 1) {
-                    if (currentTime < lyricsObjcts.get(i).time && i == 0) {
-                        index = i;
-                    }
-                    if (currentTime > lyricsObjcts.get(i).time && currentTime < lyricsObjcts.get(i + 1).time) {
-                        index = i;
-                    }
-                }
-                if (i == lyricsObjcts.size() - 1 && currentTime > lyricsObjcts.get(i).time) {
-                    index = i;
-                }
-            }
-        }
-        return index;
-    }
+//    /**
+//     * 根据时间获取歌词显示的索引值
+//     *
+//     * @return 返回高亮的歌词索引值
+//     */
+//    public int lrcIndex() {
+//        int index = 0;
+//        int currentTime = musicBinder.getPlayCurrentPosition();
+//        int duration = musicBinder.getPlayDuration();
+//        if (currentTime < duration) {
+//            for (int i = 0; i < lyricsObjcts.size(); i++) {
+//                if (i < lyricsObjcts.size() - 1) {
+//                    if (currentTime < lyricsObjcts.get(i).time && i == 0) {
+//                        index = i;
+//                    }
+//                    if (currentTime > lyricsObjcts.get(i).time && currentTime < lyricsObjcts.get(i + 1).time) {
+//                        index = i;
+//                    }
+//                }
+//                if (i == lyricsObjcts.size() - 1 && currentTime > lyricsObjcts.get(i).time) {
+//                    index = i;
+//                }
+//            }
+//        }
+//        return index;
+//    }
 
 
     /**
@@ -515,15 +578,15 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
             } else {
                 //已挂载
                 //获取储存地址
-                File floder = new File(Environment.getExternalStorageDirectory(), "URLTest");
+                File floder = new File(Environment.getExternalStorageDirectory(), "MusicLyrics");
                 //判断地址是否存在
                 if (!floder.exists()) {
                     //不存在，则创建
                     boolean s = floder.mkdirs();
                     if (s) {
-                        Log.i("LyricsActivit", "创建文件夹成功！");
+                        Log.i("LyricsActivity", "创建文件夹成功！");
                     } else {
-                        Log.e("LyricsActivit", "创建文件夹失败！");
+                        Log.e("LyricsActivity", "创建文件夹失败！");
                     }
                 }
 
@@ -565,7 +628,7 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
     private boolean readSDLyrics(String song) {
 //        boolean result = false;
 //        try {
-        String sd = Environment.getExternalStorageDirectory() + "/URLTest/";
+        String sd = Environment.getExternalStorageDirectory() + "/MusicLyrics/";
         String fileName = sd + song + ".lrc";
         File file = new File(fileName);
         if (!file.exists()) {

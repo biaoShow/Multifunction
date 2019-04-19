@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,10 @@ import com.example.biao.multifunction.util.WeatherHttpUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 搜索城市天气预报Activity
  * Created by biao on 2018/5/15.
@@ -34,6 +39,8 @@ import java.util.List;
 
 public class SearchWeatherActivity extends BaseActivity {
 
+    @BindView(R.id.iv_weather_back)
+    ImageView ivWeatherBack;
     private List<Province> provinceList;//省份对象
     private List<City> cityList;//市级对象
     private List<County> countyList;//县/区对象
@@ -51,6 +58,7 @@ public class SearchWeatherActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_search_layuot);
+        ButterKnife.bind(this);
 
         //沉浸效果
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -204,6 +212,17 @@ public class SearchWeatherActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if ("county".equals(current)) {
+            queryCities();
+        } else if ("city".equals(current)) {
+            queryProvinces();
+        } else {
+            finish();
+        }
+    }
+
+    @OnClick(R.id.iv_weather_back)
+    public void onViewClickedWeather() {
         if ("county".equals(current)) {
             queryCities();
         } else if ("city".equals(current)) {
