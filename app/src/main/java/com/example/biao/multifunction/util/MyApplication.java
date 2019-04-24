@@ -2,6 +2,8 @@ package com.example.biao.multifunction.util;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
+import android.view.Window;
 
 import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.model.PublicFinalModel;

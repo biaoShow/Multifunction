@@ -33,10 +33,12 @@ import com.example.biao.multifunction.fragment.MusicFragment;
 import com.example.biao.multifunction.fragment.NavigationFragment;
 import com.example.biao.multifunction.fragment.VideoFragment;
 import com.example.biao.multifunction.fragment.WeatherFragment;
+import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.util.ActivityCollecter;
 import com.example.biao.multifunction.util.MusicUtils;
 import com.example.biao.multifunction.util.MyApplication;
 import com.example.biao.multifunction.util.OnClickLeftRLItemListener;
+import com.example.biao.multifunction.util.SharedPreferencesUtil;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
@@ -212,6 +214,11 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         ActivityCollecter.removeActivity(this);
+        //退出前要把position修改为所有歌单所在位置
+        SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getIntent(this);
+        sharedPreferencesUtil.putInt(PreferencesKep.PLAY_POSITION, MusicUtils.songGetListPosition(
+                MusicUtils.getMusicData(this), sharedPreferencesUtil.getString(
+                        PreferencesKep.PLAY_SONG), sharedPreferencesUtil.getInt(PreferencesKep.PLAY_DURATION)));
     }
 
     /**

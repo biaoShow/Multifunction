@@ -94,6 +94,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         list = MusicUtils.getMusicData(MyApplication.getContext());
+        searchSongList = list;
         letterMap = MusicUtils.getLetterMap(MyApplication.getContext());
 
         //加载适配器
@@ -137,6 +138,7 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 musicBinder = (MusicService.MusicBinder) service;//获取到一个服务对象
+                musicBinder.setList(list);
                 if (musicBinder.isPlaying()) {
                     objectAnimator.start();
                 }
