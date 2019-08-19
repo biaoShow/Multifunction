@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.activity.LyricsActivit;
@@ -281,7 +282,11 @@ public class MusicFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.civ_music:
-                LyricsActivit.startAction(getActivity());
+                if (list.size() > 0) {
+                    LyricsActivit.startAction(getActivity());
+                } else {
+                    Toast.makeText(getActivity(), "暂无歌曲", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;

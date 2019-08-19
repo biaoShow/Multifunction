@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.activity.LyricsActivit;
 import com.example.biao.multifunction.definedview.SideBar;
@@ -28,6 +35,9 @@ import com.example.biao.multifunction.util.OnClickMusicCodeItemLisener;
 import com.example.biao.multifunction.util.OnClickMusicitemLisener;
 import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -44,6 +54,18 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private OnClickMusicCodeItemLisener onClickMusicCodeItemLisener;
     private String playSong = "";
     private MusicReceiver musicReceiver;
+//    private RequestOptions options = new RequestOptions()
+//            .placeholder(R.mipmap.music_logo)    //加载成功之前占位图
+//            .error(R.mipmap.ic_launcher)    //加载错误之后的错误图
+//            .override(100, 100)    //指定图片的尺寸
+//            .fitCenter()   //指定图片的缩放类型为fitCenter （等比例缩放图片，宽或者是高等于ImageView的宽或者是高。是指其中一个满足即可不会一定铺满imageview）
+//            .centerCrop()//指定图片的缩放类型为centerCrop （等比例缩放图片，直到图片的宽高都,大于等于ImageView的宽度，然后截取中间的显示。）
+//            .skipMemoryCache(true)    //不使用内存缓存
+//            .diskCacheStrategy(DiskCacheStrategy.ALL)    //缓存所有版本的图像
+//            .diskCacheStrategy(DiskCacheStrategy.NONE)    //不使用硬盘本地缓存
+//            .diskCacheStrategy(DiskCacheStrategy.DATA)    //只缓存原来分辨率的图片
+//            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)    //只缓存最终的图片
+//            ;
 
     public MusicFragmentRVAdapter(Context context, List<Song> list) {
         this.context = context;
@@ -65,20 +87,49 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
+        ((MyViewHolder) holder).item_mymusic_song.setText(list.get(position).getSong());
+        ((MyViewHolder) holder).item_mymusic_singer.setText(list.get(position).getSinger());
+        ((MyViewHolder) holder).image_music_logo.setImageResource(R.mipmap.music_logo);
+        ((MyViewHolder) holder).image_music_logo.setTag(position);
+        final Handler handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                ((MyViewHolder) holder).image_music_logo.setImageBitmap((Bitmap) msg.obj);
+                if (position == (int) ((MyViewHolder) holder).image_music_logo.getTag()) {
+//                    Glide.with(context).load((Bitmap) msg.obj).into(((MyViewHolder) holder).image_music_logo);
+                    ((MyViewHolder) holder).image_music_logo.setImageBitmap((Bitmap) msg.obj);
+                }
             }
         };
-        ((MyViewHolder) holder).item_mymusic_song.setText(list.get(position).getSong());
-        ((MyViewHolder) holder).item_mymusic_singer.setText(list.get(position).getSinger());
+
+//        new AsyncTask() {
+//            @Override
+//            protected Bitmap doInBackground(Object[] objects) {
+//                Bitmap bitmap = MusicUtils.setArtwork(list.get(position).getPath());
+//                return bitmap;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Object o) {
+//                super.onPostExecute(o);
+//                if (position == (int) ((MyViewHolder) holder).image_music_logo.getTag()) {
+//                    ((MyViewHolder) holder).image_music_logo.setImageBitmap((Bitmap) o);
+//                }
+//            }
+//
+//        }.execute();
+//        Glide.with(context).load(MusicUtils.setArtwork(list.get(position).getPath()))
+//                .into(((MyViewHolder) holder).image_music_logo);
+//        Glide.with(context).load(MusicUtils.getAlbumArt(list.get(position).getAlbumID()))
+//                .into(((MyViewHolder) holder).image_music_logo);
+//        Glide.with(context).load(MusicUtils.setArtwork(list.get(position).getPath()))
+//                .apply(options) //加载成功前显示的图片
+//                .into(((MyViewHolder) holder).image_music_logo);//在RequestBuilder 中使用自定义的ImageViewTarget
         //异步加载视频截图
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap bitmap = MusicUtils.getAlbumArt(list.get(position).getAlbumID());
+                Bitmap bitmap = MusicUtils.setArtwork(list.get(position).getPath());
                 Message message = new Message();
                 message.obj = bitmap;
                 handler.sendMessage(message);
@@ -101,7 +152,6 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ((MyViewHolder) holder).item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
             ((MyViewHolder) holder).item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
         }
-
 
         ((MyViewHolder) holder).tv_start.setOnClickListener(new View.OnClickListener() {
             @Override

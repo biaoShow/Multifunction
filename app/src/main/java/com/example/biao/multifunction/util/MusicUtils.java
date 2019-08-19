@@ -4,9 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.model.Song;
@@ -18,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+
 
 /**
  * 音乐工具类
@@ -249,6 +251,41 @@ public class MusicUtils {
         }
     }
 
+    public static Bitmap setArtwork(String url) {
+        try {
+            MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
+            myRetriever.setDataSource(url);
+            byte[] art = myRetriever.getEmbeddedPicture();
+            if (art != null) {
+                return BitmapFactory.decodeByteArray(art, 0, art.length);
+            }
+        } catch (Exception e) {
+            Log.i("BBBBBB", e.getMessage());
+        }
+        return BitmapFactory.decodeResource(utilContext.getResources(), R.mipmap.music_logo);
+//        byte[] artBytes = myRetriever.getEmbeddedPicture();
+//        if (artBytes != null) {
+//            InputStream is = new ByteArrayInputStream(myRetriever.getEmbeddedPicture());
+//            Bitmap bm = BitmapFactory.decodeStream(is);
+//            return bm;
+//        } else {
+//            return BitmapFactory.decodeResource(utilContext.getResources(), R.mipmap.music_logo);
+//        }
+//        Uri selectedAudio = Uri.parse(url);
+//        MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
+//        myRetriever.setDataSource(utilContext, selectedAudio); // the URI of audio file
+//        byte[] artwork;
+//
+//        artwork = myRetriever.getEmbeddedPicture();
+//
+//        if (artwork != null) {
+//            return BitmapFactory.decodeByteArray(artwork, 0, artwork.length);
+//        } else {
+//            return BitmapFactory.decodeResource(utilContext.getResources(), R.mipmap.music_logo);
+//        }
+    }
+
+
     /**
      * 根据专辑ID获取专辑封面图
      *
@@ -258,7 +295,8 @@ public class MusicUtils {
     public static Bitmap getAlbumArt(int album_id) {
         String mUriAlbums = "content://media/external/audio/albums";
         String[] projection = new String[]{"album_art"};
-        Cursor cur = utilContext.getContentResolver().query(Uri.parse(mUriAlbums + "/" + Integer.toString(album_id)), projection, null, null, null);
+        Cursor cur = utilContext.getContentResolver().query(Uri.parse(mUriAlbums + "/" +
+                Integer.toString(album_id)), projection, null, null, null);
         String album_art = null;
         if (cur.getCount() > 0 && cur.getColumnCount() > 0) {
             cur.moveToNext();
@@ -268,7 +306,8 @@ public class MusicUtils {
         Bitmap bm = null;
         if (album_art != null) {
             bm = BitmapFactory.decodeFile(album_art);
-        } else {
+        }
+        if (null == bm) {
             bm = BitmapFactory.decodeResource(utilContext.getResources(), R.mipmap.music_logo);
         }
         return bm;
@@ -283,5 +322,4 @@ public class MusicUtils {
         }
         return position;
     }
-
 }
