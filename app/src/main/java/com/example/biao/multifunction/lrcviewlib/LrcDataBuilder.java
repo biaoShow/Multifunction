@@ -75,7 +75,6 @@ public class LrcDataBuilder {
             // 循环地读取歌词的每一行
             do {
                 line = br.readLine();
-
                 if (line != null && line.trim().length() > 0) {
                     // 解析每一行歌词 得到每行歌词的集合，因为有些歌词重复有多个时间，就可以解析出多个歌词行来
                     List<LrcRow> lrcRows = parser.parse(line);

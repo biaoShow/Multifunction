@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,16 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.biao.multifunction.R;
+import com.example.biao.multifunction.internetUtil.GetMap;
 import com.example.biao.multifunction.internetUtil.RetrofitHelper;
 import com.example.biao.multifunction.lrcviewlib.ILrcViewSeekListener;
 import com.example.biao.multifunction.lrcviewlib.LrcDataBuilder;
 import com.example.biao.multifunction.lrcviewlib.LrcRow;
 import com.example.biao.multifunction.lrcviewlib.LrcView;
-import com.example.biao.multifunction.model.LyricsObjct;
+import com.example.biao.multifunction.model.LyricsBean;
+import com.example.biao.multifunction.model.MusciBean;
 import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.model.PublicFinalModel;
 import com.example.biao.multifunction.model.Song;
-import com.example.biao.multifunction.model.SongNameGetLyrics;
 import com.example.biao.multifunction.popwindows.MyPopWindows;
 import com.example.biao.multifunction.service.MusicService;
 import com.example.biao.multifunction.util.MusicUtils;
@@ -47,10 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,21 +55,28 @@ import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DefaultObserver;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 /**
+ * 歌词页面
  * Created by biao on 2018/5/3.
  */
 
 public class LyricsActivit extends BaseActivity implements View.OnClickListener {
 
+    private static final String TAG = "LyricsActivit";
+    //    private static final String LRCBASEURL = "http://s.gecimi.com/lrc/";//歌词迷接口
+    private static final String LRCBASEURL = "http://tingapi.ting.baidu.com";//歌词迷接口
+    private static final String FROM = "android";
+    private static final String FORMAT = "json";
     //解析歌词后排序
-    public static Comparator timeComparator = new Comparator() {
-        @Override
-        public int compare(Object o1, Object o2) {
-            return (((LyricsObjct) o1).time < ((LyricsObjct) o2).time ? -1 : (((LyricsObjct) o1).time == ((LyricsObjct) o2).time ? 0 : 1));
-        }
-    };
-    List<LyricsObjct> lyricsObjcts = new ArrayList<>();//歌词对象（一行歌词封装一个对象）
+//    public static Comparator timeComparator = new Comparator() {
+//        @Override
+//        public int compare(Object o1, Object o2) {
+//            return (((LyricsObjct) o1).time < ((LyricsObjct) o2).time ? -1 : (((LyricsObjct) o1).time == ((LyricsObjct) o2).time ? 0 : 1));
+//        }
+//    };
+//    List<LyricsObjct> lyricsObjcts = new ArrayList<>();//歌词对象（一行歌词封装一个对象）
     @BindView(R.id.iv_play_pattern)
     ImageView ivPlayPattern;
     private LrcView lv_lyrics;
@@ -371,7 +374,7 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
      */
     public void updateSongLyrics() {
         if (!readSDLyrics(splaySong)) {
-            sendRequest(splaySong);
+            sendRequest(splaySong.trim(), splaySongSinger.trim());
         }
 //        lv_lyrics.setmLrcList(lyricsObjcts);
     }
@@ -409,48 +412,67 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
      *
      * @param songName 需要回去歌词下载地址的歌名
      */
-    private void sendRequest(final String songName) {
-//        //一、先根据歌名获取下载歌词地址
-//        HttpURLConnection connection;
-//        try {
-//            URL url = new URL("http://gecimi.com/api/lyric/" + songName);
-//            connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setReadTimeout(8000);
-//            connection.setConnectTimeout(8000);
-////            Log.i("XXXXXXXXXX",connection.getResponseCode()+"");
-//            if (HttpURLConnection.HTTP_OK == connection.getResponseCode()) {
-//                InputStream in = connection.getInputStream();
-//                //对获取到的输入流读取
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//                StringBuilder builder = new StringBuilder();
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    builder.append(line);
-//                }
-//                in.close();
-//                connection.disconnect();
-//                String str = builder.toString();
-//                if (str.contains("[") && str.contains("]")) {
-//                    String str1 = str.substring(str.indexOf('['), str.indexOf("]") + 1);
-//                    JSONWithJSON(str1);//引用GSON解析
-//                }
-
-        RetrofitHelper.getInstance(null).getInternetInterface()
-                .getLyricsUrl(songName)
+    private void sendRequest(final String songName, final String songSinger) {
+        //一、先根据歌名获取下载歌词地址
+//        RetrofitHelper.getInstance(null).getInternetInterface()
+//                .getLyricsUrl(songName)
+//                .subscribeOn(Schedulers.io())//请求在io线程
+//                .observeOn(AndroidSchedulers.mainThread())//主线程显示数据
+//                .subscribe(new DefaultObserver<SongNameGetLyrics>() {
+//                    @Override
+//                    protected void onStart() {
+//                        super.onStart();
+////                        showLoadingDialog();
+//                    }
+//
+//                    @Override
+//                    public void onNext(SongNameGetLyrics songNameGetLyrics) {
+//                        if (songNameGetLyrics.getCount() > 0) {
+//                            getLyrics(songNameGetLyrics.getResult().get(0).getLrc(), songName);
+//                        } else {
+//                            Log.e("onNext", "暂无歌词");
+//                            lv_lyrics.setNoDataMessage("暂无歌词");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+////                        hideLoadingDialog();
+//                        lv_lyrics.setNoDataMessage("暂无歌词");
+//                        Log.e("onError", e.getMessage());
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+////                        hideLoadingDialog();
+//                    }
+//                });
+//    }
+        RetrofitHelper.getInstance(LRCBASEURL).getInternetInterface()
+                .getMusciDetails(GetMap.getMusciDetails(FROM,
+                        "baidu.ting.search.catalogSug", FORMAT, songName))
                 .subscribeOn(Schedulers.io())//请求在io线程
                 .observeOn(AndroidSchedulers.mainThread())//主线程显示数据
-                .subscribe(new DefaultObserver<SongNameGetLyrics>() {
-                    @Override
-                    protected void onStart() {
-                        super.onStart();
-//                        showLoadingDialog();
-                    }
+                .subscribe(new DefaultObserver<MusciBean>() {
 
                     @Override
-                    public void onNext(SongNameGetLyrics songNameGetLyrics) {
-                        if (songNameGetLyrics.getCount() > 0) {
-                            getLyrics(songNameGetLyrics.getResult().get(0).getLrc(), songName);
+                    public void onNext(MusciBean musciBean) {
+                        List<MusciBean.SongBean> songBeans = musciBean.getSong();
+                        if (songBeans != null && songBeans.size() > 0) {
+                            for (MusciBean.SongBean s : songBeans) {
+                                if (s.getSongname().equals(songName) && (s.getSongname().equals(songSinger)
+                                        || s.getArtistname().contains(songSinger) || songSinger.contains(s.getArtistname()))) {
+                                    getLyrics(s.getSongid(), songName);
+                                    return;
+                                }
+                            }
+                            for (MusciBean.SongBean s : songBeans) {
+                                if (s.getSongname().equals(songName)) {
+                                    getLyrics(s.getSongid(), songName);
+                                    return;
+                                }
+                            }
+                            getLyrics(songBeans.get(0).getSongid(), songName);
                         } else {
                             Log.e("onNext", "暂无歌词");
                             lv_lyrics.setNoDataMessage("暂无歌词");
@@ -459,14 +481,12 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
 
                     @Override
                     public void onError(Throwable e) {
-//                        hideLoadingDialog();
                         lv_lyrics.setNoDataMessage("暂无歌词");
                         Log.e("onError", e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-//                        hideLoadingDialog();
                     }
                 });
     }
@@ -521,39 +541,117 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
     /**
      * 根据URL获取歌词，因为返回不是json数据，只能做特殊处理
      *
-     * @param url
      * @return
      */
-    private void getLyrics(final String url, final String songName) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url1 = new URL(url);
-                    HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
-                    connection1.setRequestMethod("GET");
-                    connection1.setReadTimeout(8000);
-                    connection1.setConnectTimeout(8000);
-//                Log.i("XXXXXXXXXX",connection.getResponseCode()+"");
-                    if (HttpURLConnection.HTTP_OK == connection1.getResponseCode()) {
-                        InputStream in1 = connection1.getInputStream();
-                        //对获取到的输入流读取
-                        BufferedReader reader1 = new BufferedReader(new InputStreamReader(in1));
-                        StringBuilder builder1 = new StringBuilder();
-                        String line1;
-                        while ((line1 = reader1.readLine()) != null) {
-                            builder1.append(line1 + "\n");
+    private void getLyrics(final String songId, final String songName) {
+        RetrofitHelper.getInstance(LRCBASEURL).getInternetInterface()
+                .getLyrics(GetMap.getLyrics(FROM, "baidu.ting.song.lry", FORMAT, songId))
+                .subscribeOn(Schedulers.io())//请求在io线程
+                .observeOn(AndroidSchedulers.mainThread())//主线程显示数据
+                .subscribe(new DefaultObserver<LyricsBean>() {
+                    @Override
+                    public void onNext(LyricsBean lyricsBean) {
+//                        try {
+//                            InputStream in1 = responseBody.byteStream();
+//                            //对获取到的输入流读取
+//                            BufferedReader reader1 = new BufferedReader(new InputStreamReader(in1));
+//                            StringBuilder builder1 = new StringBuilder();
+//                            String line1;
+//                            while ((line1 = reader1.readLine()) != null) {
+//                                builder1.append(line1 + "\n");
+//                            }
+//                            in1.close();
+//                            saveLyrics(builder1.toString(), songName);
+                        if (null != lyricsBean && lyricsBean.getLrcContent() != null) {
+                            saveLyrics(lyricsBean.getLrcContent(), songName);
+                            Log.i("SecondActivity", lyricsBean.getLrcContent());
+                        } else {
+                            lv_lyrics.setNoDataMessage("暂无歌词");
                         }
-                        in1.close();
-                        connection1.disconnect();
-                        saveLyrics(builder1.toString(), songName);
-                        Log.i("SecondActivity", builder1.toString());
+//                        } catch (IOException e) {
+//                            lv_lyrics.setNoDataMessage("暂无歌词");
+//                            e.printStackTrace();
+//                        }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "getLyrics_onError:" + e.getMessage());
+                        lv_lyrics.setNoDataMessage("暂无歌词");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+//        String url1 = url.substring(url.indexOf("lrc/") + 4);
+//        RetrofitHelper.getInstance(LRCBASEURL).getInternetInterface()
+//                .downloadFile(url1)
+//                .subscribeOn(Schedulers.io())//请求在io线程
+//                .observeOn(AndroidSchedulers.mainThread())//主线程显示数据
+//                .subscribe(new DefaultObserver<ResponseBody>() {
+//                    @Override
+//                    public void onNext(ResponseBody responseBody) {
+//                        try {
+//                            InputStream in1 = responseBody.byteStream();
+//                            //对获取到的输入流读取
+//                            BufferedReader reader1 = new BufferedReader(new InputStreamReader(in1));
+//                            StringBuilder builder1 = new StringBuilder();
+//                            String line1;
+//                            while ((line1 = reader1.readLine()) != null) {
+//                                builder1.append(line1 + "\n");
+//                            }
+//                            in1.close();
+//                            saveLyrics(builder1.toString(), songName);
+//                            Log.i("SecondActivity", builder1.toString());
+//                        } catch (IOException e) {
+//                            lv_lyrics.setNoDataMessage("暂无歌词");
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.e(TAG, "getLyrics_onError:" + e.getMessage());
+//                        lv_lyrics.setNoDataMessage("暂无歌词");
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    URL url1 = new URL(url);
+//                    HttpURLConnection connection1 = (HttpURLConnection) url1.openConnection();
+//                    connection1.setRequestMethod("GET");
+//                    connection1.setReadTimeout(8000);
+//                    connection1.setConnectTimeout(8000);
+////                Log.i("XXXXXXXXXX",connection.getResponseCode()+"");
+//                    if (HttpURLConnection.HTTP_OK == connection1.getResponseCode()) {
+//                        InputStream in1 = connection1.getInputStream();
+//                        //对获取到的输入流读取
+//                        BufferedReader reader1 = new BufferedReader(new InputStreamReader(in1));
+//                        StringBuilder builder1 = new StringBuilder();
+//                        String line1;
+//                        while ((line1 = reader1.readLine()) != null) {
+//                            builder1.append(line1 + "\n");
+//                        }
+//                        in1.close();
+//                        connection1.disconnect();
+//                        saveLyrics(builder1.toString(), songName);
+//                        Log.i("SecondActivity", builder1.toString());
+//                    }
+//                } catch (IOException e) {
+//                    lv_lyrics.setNoDataMessage("暂无歌词");
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
     }
 

@@ -11,14 +11,16 @@ import java.util.List;
 
 public class DefaultLrcRowsParser implements IRowsParser {
     private String tag = "DefaultLrcRowsParser";
+
     @Override
     public List<LrcRow> parse(String lrcRowDada) {
         try {
             // [01:15.33] 或者 [00:00]这种格式
             Boolean Form1 = lrcRowDada.indexOf("[") == 0 && lrcRowDada.indexOf("]") == 9;
+            Boolean Form3 = lrcRowDada.indexOf("[") == 0 && lrcRowDada.indexOf("]") == 10;
             Boolean Form2 = lrcRowDada.indexOf("[") == 0 && lrcRowDada.indexOf("]") == 6;
 
-            if (!Form1 && !Form2) {
+            if (!Form1 && !Form2 && !Form3) {
                 return null;
             }
 
