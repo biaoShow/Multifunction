@@ -363,7 +363,7 @@ public class MediaPlayer {
     	    	System.loadLibrary("vplayer");	
     	    	loadFFmpeg_native("libffmpeg.so");
     	    	loadVVO_native("libvvo.9.so");
-    	    	loadVVO_native("libvvo.9.so");
+//    	    	loadVVO_native("libvvo.9.so");
     	    	loadVAO_native("libvao.0.so");
     	    }else{
     	    	System.load(LIB_ROOT+ "libstlport_shared.so");
