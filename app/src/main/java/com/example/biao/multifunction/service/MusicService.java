@@ -281,6 +281,7 @@ public class MusicService extends Service {
      */
     private void savePreferences() {
         Song song = list.get(playPosition);
+        sharedPreferencesUtil.putString(PreferencesKep.PLAY_SONG_ID, song.getSongId());
         sharedPreferencesUtil.putString(PreferencesKep.PLAY_SONG, song.getSong());
         sharedPreferencesUtil.putString(PreferencesKep.PLAY_SINGER, song.getSinger());
         sharedPreferencesUtil.putInt(PreferencesKep.PLAY_POSITION, playPosition);

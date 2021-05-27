@@ -11,12 +11,21 @@ import java.io.Serializable;
  */
 
 public class Song implements Serializable, Comparable<Song> {
+    private String songId;//歌曲id
     private String song;//歌曲名字
     private String singer;//歌手名字
     private String path;//歌曲路径
     private int duration;//歌曲长度
     private long size;//歌曲大小
     private int albumID;
+
+    public String getSongId() {
+        return songId;
+    }
+
+    public void setSongId(String songId) {
+        this.songId = songId;
+    }
 
     public int getAlbumID() {
         return albumID;
@@ -69,5 +78,17 @@ public class Song implements Serializable, Comparable<Song> {
     @Override
     public int compareTo(@NonNull Song o) {
         return this.singer.compareTo(o.getSinger());
+    }
+
+    @Override
+    public String toString() {
+        return "Song{" +
+                "song='" + song + '\'' +
+                ", singer='" + singer + '\'' +
+                ", path='" + path + '\'' +
+                ", duration=" + duration +
+                ", size=" + size +
+                ", albumID=" + albumID +
+                '}';
     }
 }

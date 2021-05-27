@@ -1,10 +1,8 @@
 package com.example.biao.multifunction.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +13,7 @@ import android.widget.TextView;
 
 import com.example.biao.multifunction.R;
 import com.example.biao.multifunction.model.VideoInfo;
-import com.example.biao.multifunction.util.GetLocalVieoInfo;
-import com.example.biao.multifunction.util.MyApplication;
+import com.example.biao.multifunction.util.MusicUtils;
 import com.example.biao.multifunction.util.RecyclerViewItemOnClickListener;
 
 import java.util.List;
@@ -45,7 +42,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        @SuppressLint("InflateParams")
         View view = mLayout.inflate(R.layout.video_recyclerview_item, null);
         return new MyViewHolder(view);
     }
@@ -54,7 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     Handler handler;
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 //        handler = new Handler() {
 //            @Override
 //            public void handleMessage(Message msg) {
@@ -63,7 +59,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //            }
 //        };
         ((MyViewHolder) holder).tv_video_name.setText(list.get(position).getName());
-        ((MyViewHolder) holder).tv_video_time.setText(GetLocalVieoInfo.formatTime(list.get(position).getTime()));
+        ((MyViewHolder) holder).tv_video_time.setText(MusicUtils.formatTime(list.get(position).getTime()));
 //        //异步加载视频截图
 //        MyApplication.bgTp.execute(new Runnable() {
 //            @Override
@@ -75,13 +71,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 //            }
 //        });
 //        ((MyViewHolder)holder).iv_image.setImageBitmap(GetLocalVieoInfo.getVideoThumbnail(list.get(position).getImagePath()));
-        ((MyViewHolder) holder).relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerViewItemOnClickListener.onClickItem(position);
-            }
-        });
+        ((MyViewHolder) holder).relativeLayout.setTag(position);
+        ((MyViewHolder) holder).relativeLayout.setOnClickListener(onClickListener);
     }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            recyclerViewItemOnClickListener.onClickItem((int) view.getTag());
+        }
+    };
 
     @Override
     public int getItemCount() {

@@ -48,6 +48,7 @@ public class MusicUtils {
                         if (singer.contains("<unknown>")) {
                             singer = "未知";
                         }
+                        song.setSongId(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
                         song.setSong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)));
                         song.setSinger(singer);
                         song.setPath(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)));
@@ -219,15 +220,15 @@ public class MusicUtils {
     /**
      * 定义一个方法用来格式化获取到的时间
      */
-
     public static String formatTime(int time) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.setLength(0);
         if (time / 1000 % 60 < 10) {
-            return time / 1000 / 60 + ":0" + time / 1000 % 60;
-
+            stringBuilder.append(time / 1000 / 60).append(":0").append(time / 1000 % 60);
         } else {
-            return time / 1000 / 60 + ":" + time / 1000 % 60;
+            stringBuilder.append(time / 1000 / 60).append(":").append(time / 1000 % 60);
         }
-
+        return stringBuilder.toString();
     }
 
     /**

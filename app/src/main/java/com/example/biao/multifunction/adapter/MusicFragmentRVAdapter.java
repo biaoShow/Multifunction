@@ -36,6 +36,9 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private OnClickMusicitemLisener onClickMusicitemLisener;
     private OnClickMusicCodeItemLisener onClickMusicCodeItemLisener;
     private String playSong = "";
+    private String playSongId = "";
+    int playColor;
+    int normalColor;
     private MusicReceiver musicReceiver;
     private Bitmap bitmap;
 //    private RequestOptions options = new RequestOptions()
@@ -61,6 +64,8 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.example.biao.service.UPDATEUI");
         context.registerReceiver(musicReceiver, intentFilter);
+        playColor = context.getResources().getColor(R.color.sidebar_right_select);
+        normalColor = context.getResources().getColor(R.color.item_song);
     }
 
     @Override
@@ -76,8 +81,8 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         MyViewHolder mHolder = (MyViewHolder) holder;
         mHolder.item_mymusic_song.setText(list.get(position).getSong());
         mHolder.item_mymusic_singer.setText(list.get(position).getSinger());
-        mHolder.image_music_logo.setImageResource(R.mipmap.music_logo);
-        mHolder.image_music_logo.setTag(position);
+//        mHolder.image_music_logo.setImageResource(R.mipmap.music_logo);
+//        mHolder.image_music_logo.setTag(position);
 //        handler = new Handler() {
 //            @Override
 //            public void handleMessage(Message msg) {
@@ -130,33 +135,49 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String strTime = MusicUtils.formatTime(list.get(position).getDuration());
         mHolder.item_mymusic_duration.setText(strTime);
 
-        playSong = SharedPreferencesUtil.getIntent(context).getString(PreferencesKep.PLAY_SONG);
-        int playDuration = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_DURATION);
-        int playPosition = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_POSITION);
-        if (list.get(position).getSong().equals(playSong) && list.get(position).getDuration() == playDuration && playPosition == position) {
-            mHolder.item_mymusic_song.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
-            mHolder.item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
-            mHolder.item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
+//        playSong = SharedPreferencesUtil.getIntent(context).getString(PreferencesKep.PLAY_SONG);
+        playSongId = SharedPreferencesUtil.getIntent(context).getString(PreferencesKep.PLAY_SONG_ID);
+//        int playDuration = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_DURATION);
+//        int playPosition = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_POSITION);
+//        if (list.get(position).getSong().equals(playSong) && list.get(position).getDuration() == playDuration && playPosition == position) {
+        if (list.get(position).getSongId().equals(playSongId)) {
+            mHolder.item_mymusic_song.setTextColor(playColor);
+            mHolder.item_mymusic_singer.setTextColor(playColor);
+            mHolder.item_mymusic_duration.setTextColor(playColor);
         } else {
-            mHolder.item_mymusic_song.setTextColor(context.getResources().getColor(R.color.item_song));
-            mHolder.item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
-            mHolder.item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
+            mHolder.item_mymusic_song.setTextColor(normalColor);
+            mHolder.item_mymusic_singer.setTextColor(normalColor);
+            mHolder.item_mymusic_duration.setTextColor(normalColor);
         }
-
-        mHolder.tv_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickMusicitemLisener.onClickItem(position);
-            }
-        });
-        mHolder.iv_item_code.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickMusicCodeItemLisener.onClickCodeItem(position);
-            }
-        });
+        mHolder.tv_start.setTag(position);
+        mHolder.tv_start.setOnClickListener(onClickListener);
+//        mHolder.tv_start.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onClickMusicitemLisener.onClickItem(position);
+//            }
+//        });
+        mHolder.iv_item_code.setTag(position);
+        mHolder.iv_item_code.setOnClickListener(onClickListener);
+//        mHolder.iv_item_code.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onClickMusicCodeItemLisener.onClickCodeItem(position);
+//            }
+//        });
 
     }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view instanceof TextView) {
+                onClickMusicitemLisener.onClickItem((int) view.getTag());
+            } else {
+                onClickMusicCodeItemLisener.onClickCodeItem((int) view.getTag());
+            }
+        }
+    };
 
 
     //暴露一个设置监听item监听方法

@@ -18,47 +18,50 @@ import java.util.List;
  * Created by biao on 2018/5/15.
  */
 
-public class WeatherRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class WeatherRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<String> list;
     private Context context;
     private LayoutInflater mLayout;
     private OnClickWeatherItemListener onClickWeatherItemListener;
 
-    public WeatherRecyclerViewAdapter(Context context,List<String> list){
+    public WeatherRecyclerViewAdapter(Context context, List<String> list) {
         this.context = context;
         this.list = list;
         this.mLayout = LayoutInflater.from(context);
     }
 
-    public void setOnClickWeatherItemListener(OnClickWeatherItemListener onClickWeatherItemListener){
+    public void setOnClickWeatherItemListener(OnClickWeatherItemListener onClickWeatherItemListener) {
         this.onClickWeatherItemListener = onClickWeatherItemListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-         @SuppressLint("InflateParams") View view = mLayout.inflate(R.layout.weather_recyclerview_item,null);
+        View view = mLayout.inflate(R.layout.weather_recyclerview_item, null);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
-        ((MyViewHolder)holder).tv_weather_item.setText(list.get(position));
-        ((MyViewHolder)holder).tv_weather_item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickWeatherItemListener.onClickItem(position);
-            }
-        });
+        ((MyViewHolder) holder).tv_weather_item.setText(list.get(position));
+        ((MyViewHolder) holder).tv_weather_item.setTag(position);
+        ((MyViewHolder) holder).tv_weather_item.setOnClickListener(onClickListener);
 
     }
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickWeatherItemListener.onClickItem((int) v.getTag());
+        }
+    };
 
     @Override
     public int getItemCount() {
         return list.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder{
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView tv_weather_item;
 

@@ -6,6 +6,7 @@ package com.example.biao.multifunction.model;
  */
 
 public class PreferencesKep {
+    public static final String PLAY_SONG_ID = "play_song_id";
     public static final String PLAY_POSITION = "play_position";
     public static final String PLAY_SINGER = "play_singer";
     public static final String PLAY_SONG = "play_song";

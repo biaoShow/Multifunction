@@ -15,6 +15,7 @@
         android:id="@+id/image_music_logo"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:src="@mipmap/music_logo"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp" />
 
