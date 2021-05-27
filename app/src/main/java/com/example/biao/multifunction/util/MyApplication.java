@@ -8,6 +8,9 @@ import android.view.Window;
 import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.model.PublicFinalModel;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * 获取全局context
  * Created by biao on 2018/5/3.
@@ -16,6 +19,9 @@ import com.example.biao.multifunction.model.PublicFinalModel;
 public class MyApplication extends Application {
 
     private static Context context;
+    //线程池
+    public static final ExecutorService bgTp = Executors.newCachedThreadPool();
+
 
     @Override
     public void onCreate() {

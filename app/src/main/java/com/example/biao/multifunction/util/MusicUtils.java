@@ -252,9 +252,10 @@ public class MusicUtils {
         }
     }
 
+    private static final MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
+
     public static Bitmap setArtwork(String url) {
         try {
-            MediaMetadataRetriever myRetriever = new MediaMetadataRetriever();
             myRetriever.setDataSource(url);
             byte[] art = myRetriever.getEmbeddedPicture();
             if (art != null) {
@@ -263,7 +264,7 @@ public class MusicUtils {
         } catch (Exception e) {
             Log.i("BBBBBB", e.getMessage());
         }
-        return BitmapFactory.decodeResource(utilContext.getResources(), R.mipmap.music_logo);
+        return null;
 //        byte[] artBytes = myRetriever.getEmbeddedPicture();
 //        if (artBytes != null) {
 //            InputStream is = new ByteArrayInputStream(myRetriever.getEmbeddedPicture());

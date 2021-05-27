@@ -127,6 +127,8 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
         fragments.add(weatherFragment);
         fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
 
+        //设置超过4个fragment再去销毁，防止卡顿问题
+        viewPager.setOffscreenPageLimit(4);
         viewPager.setOnPageChangeListener(this);
 
         if (isFirst) {

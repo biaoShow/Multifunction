@@ -1,16 +1,11 @@
 package com.example.biao.multifunction.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,26 +13,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.biao.multifunction.R;
-import com.example.biao.multifunction.activity.LyricsActivit;
-import com.example.biao.multifunction.definedview.SideBar;
 import com.example.biao.multifunction.model.PreferencesKep;
 import com.example.biao.multifunction.model.Song;
-import com.example.biao.multifunction.service.MusicService;
-import com.example.biao.multifunction.util.GetLocalVieoInfo;
 import com.example.biao.multifunction.util.MusicUtils;
-import com.example.biao.multifunction.util.MyApplication;
 import com.example.biao.multifunction.util.OnClickMusicCodeItemLisener;
 import com.example.biao.multifunction.util.OnClickMusicitemLisener;
 import com.example.biao.multifunction.util.SharedPreferencesUtil;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -54,6 +37,7 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private OnClickMusicCodeItemLisener onClickMusicCodeItemLisener;
     private String playSong = "";
     private MusicReceiver musicReceiver;
+    private Bitmap bitmap;
 //    private RequestOptions options = new RequestOptions()
 //            .placeholder(R.mipmap.music_logo)    //加载成功之前占位图
 //            .error(R.mipmap.ic_launcher)    //加载错误之后的错误图
@@ -85,22 +69,25 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return new MyViewHolder(view);
     }
 
+    Handler handler = new Handler();
+
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-        ((MyViewHolder) holder).item_mymusic_song.setText(list.get(position).getSong());
-        ((MyViewHolder) holder).item_mymusic_singer.setText(list.get(position).getSinger());
-        ((MyViewHolder) holder).image_music_logo.setImageResource(R.mipmap.music_logo);
-        ((MyViewHolder) holder).image_music_logo.setTag(position);
-        final Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (position == (int) ((MyViewHolder) holder).image_music_logo.getTag()) {
-//                    Glide.with(context).load((Bitmap) msg.obj).into(((MyViewHolder) holder).image_music_logo);
-                    ((MyViewHolder) holder).image_music_logo.setImageBitmap((Bitmap) msg.obj);
-                }
-            }
-        };
+        MyViewHolder mHolder = (MyViewHolder) holder;
+        mHolder.item_mymusic_song.setText(list.get(position).getSong());
+        mHolder.item_mymusic_singer.setText(list.get(position).getSinger());
+        mHolder.image_music_logo.setImageResource(R.mipmap.music_logo);
+        mHolder.image_music_logo.setTag(position);
+//        handler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                super.handleMessage(msg);
+//                if (position == (int) mHolder.image_music_logo.getTag()) {
+////                    Glide.with(context).load((Bitmap) msg.obj).into(((MyViewHolder) holder).image_music_logo);
+//                    mHolder.image_music_logo.setImageBitmap((Bitmap) msg.obj);
+//                }
+//            }
+//        };
 
 //        new AsyncTask() {
 //            @Override
@@ -125,41 +112,44 @@ public class MusicFragmentRVAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        Glide.with(context).load(MusicUtils.setArtwork(list.get(position).getPath()))
 //                .apply(options) //加载成功前显示的图片
 //                .into(((MyViewHolder) holder).image_music_logo);//在RequestBuilder 中使用自定义的ImageViewTarget
-        //异步加载视频截图
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmap = MusicUtils.setArtwork(list.get(position).getPath());
-                Message message = new Message();
-                message.obj = bitmap;
-                handler.sendMessage(message);
-            }
-        }).start();
 
-        int time = list.get(position).getDuration();
-        String strTime = MusicUtils.formatTime(time);
-        ((MyViewHolder) holder).item_mymusic_duration.setText(strTime);
+        //耗时任务子线程执行
+//        MyApplication.bgTp.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                bitmap = MusicUtils.setArtwork(list.get(position).getPath());
+//                if (bitmap != null) {
+//                    Message message = Message.obtain();
+//                    message.obj = bitmap;
+//                    handler.sendMessage(message);
+//                }
+//            }
+//        });
+
+
+        String strTime = MusicUtils.formatTime(list.get(position).getDuration());
+        mHolder.item_mymusic_duration.setText(strTime);
 
         playSong = SharedPreferencesUtil.getIntent(context).getString(PreferencesKep.PLAY_SONG);
         int playDuration = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_DURATION);
         int playPosition = SharedPreferencesUtil.getIntent(context).getInt(PreferencesKep.PLAY_POSITION);
         if (list.get(position).getSong().equals(playSong) && list.get(position).getDuration() == playDuration && playPosition == position) {
-            ((MyViewHolder) holder).item_mymusic_song.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
-            ((MyViewHolder) holder).item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
-            ((MyViewHolder) holder).item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
+            mHolder.item_mymusic_song.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
+            mHolder.item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
+            mHolder.item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.sidebar_right_select));
         } else {
-            ((MyViewHolder) holder).item_mymusic_song.setTextColor(context.getResources().getColor(R.color.item_song));
-            ((MyViewHolder) holder).item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
-            ((MyViewHolder) holder).item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
+            mHolder.item_mymusic_song.setTextColor(context.getResources().getColor(R.color.item_song));
+            mHolder.item_mymusic_singer.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
+            mHolder.item_mymusic_duration.setTextColor(context.getResources().getColor(R.color.item_singer_and_time));
         }
 
-        ((MyViewHolder) holder).tv_start.setOnClickListener(new View.OnClickListener() {
+        mHolder.tv_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMusicitemLisener.onClickItem(position);
             }
         });
-        ((MyViewHolder) holder).iv_item_code.setOnClickListener(new View.OnClickListener() {
+        mHolder.iv_item_code.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickMusicCodeItemLisener.onClickCodeItem(position);

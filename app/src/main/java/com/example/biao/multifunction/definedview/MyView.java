@@ -45,7 +45,7 @@ public class MyView extends View {
 
     private String text;
     private int textColor, mybackground;
-    private float textSize, imgWidth, imgHeight, img_and_text_distance,viewXr,viewYr;
+    private float textSize, imgWidth, imgHeight, img_and_text_distance, viewXr, viewYr;
     private Drawable mysrc;
 
     public MyView(Context context, @Nullable AttributeSet attrs) {
@@ -61,8 +61,8 @@ public class MyView extends View {
         imgWidth = ta.getDimension(R.styleable.MyView_imgWidth, 100);
         imgHeight = ta.getDimension(R.styleable.MyView_imgHeight, 100);
         img_and_text_distance = ta.getDimension(R.styleable.MyView_img_and_text_distance, 20);
-        viewXr = ta.getDimension(R.styleable.MyView_viewXr,0);
-        viewYr = ta.getDimension(R.styleable.MyView_viewYr,0);
+        viewXr = ta.getDimension(R.styleable.MyView_viewXr, 0);
+        viewYr = ta.getDimension(R.styleable.MyView_viewYr, 0);
 
         mysrc = ta.getDrawable(R.styleable.MyView_mysrc);
         bitmap = drawableToBitmap(mysrc);
@@ -73,46 +73,41 @@ public class MyView extends View {
 
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-    {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int width;
-        int height ;
+        int height;
         //text 非空处理
-        if(text==null){
+        if (text == null) {
             text = "TextView";
         }
-        if (widthMode == MeasureSpec.EXACTLY)
-        {
+        if (widthMode == MeasureSpec.EXACTLY) {
             width = widthSize;
-        } else
-        {
+        } else {
             mPaintWidth.setTextSize(textSize);
             //设置位置的宽度（长度）
             mPaintWidth.getTextBounds(text, 0, text.length(), mBoundWidth);
             float textWidth = mBoundWidth.width();
             //获取文字长度和图片框度的最大值
-            float max = Math.max(textWidth,imgWidth);
+            float max = Math.max(textWidth, imgWidth);
             //设置绘制的宽度
             int desired = (int) (getPaddingLeft() + max + getPaddingRight());
             width = desired;
         }
 
-        if (heightMode == MeasureSpec.EXACTLY)
-        {
+        if (heightMode == MeasureSpec.EXACTLY) {
             height = heightSize;
-        } else
-        {
+        } else {
             mPaintHeight.setTextSize(textSize);
             //设置文本的长度
             mPaintHeight.getTextBounds(text, 0, text.length(), mBoundWidth);
             //获取文本的高度
             float textHeight = mBoundWidth.height();
             //设置绘制的高度
-            int desired = (int) (getPaddingTop() + imgHeight+textHeight+img_and_text_distance
+            int desired = (int) (getPaddingTop() + imgHeight + textHeight + img_and_text_distance
                     + getPaddingBottom());
             height = desired;
         }
@@ -120,6 +115,9 @@ public class MyView extends View {
 
     }
 
+    RectF rectF = new RectF();
+    Rect src = new Rect();
+    Rect dst = new Rect();
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -129,14 +127,14 @@ public class MyView extends View {
         mPaintWidth.setTextSize(textSize);
         mPaintWidth.setColor(mybackground);
         //设置画图起始位置和大小
-        RectF rectF = new RectF(0,0,getMeasuredWidth(),getMeasuredHeight());
+        rectF.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
         //设置圆角半径并绘制图
-        canvas.drawRoundRect(rectF,viewXr,viewYr,mPaintWidth);
+        canvas.drawRoundRect(rectF, viewXr, viewYr, mPaintWidth);
 
         //绘制文字
         mPaintWidth.setColor(textColor);
         //非空处理
-        if(text==null){
+        if (text == null) {
             text = "TextView";
         }
         //设置绘制文字长度
@@ -150,21 +148,21 @@ public class MyView extends View {
         canvas.translate(getWidth() / 2, 0);
 
         // 指定图片绘制区域
-        @SuppressLint("DrawAllocation")
-        Rect src = new Rect(0, 0, bitmap.getWidth(),
+
+        src.set(0, 0, bitmap.getWidth(),
                 bitmap.getHeight());
 
         // 指定图片在屏幕上显示的区域
-        @SuppressLint("DrawAllocation")
-        Rect dst = new Rect(-(int) imgWidth / 2, getPaddingTop(), (int) imgWidth / 2,
+        dst.set(-(int) imgWidth / 2, getPaddingTop(), (int) imgWidth / 2,
                 (int) imgHeight + getPaddingTop());
 
         // 绘制图片
-            canvas.drawBitmap(bitmap, src, dst, null);
+        canvas.drawBitmap(bitmap, src, dst, null);
     }
 
     /**
      * Drawable图片转化为Bitmap方法
+     *
      * @param mysrc Drawable类型图片
      * @return 返回Btimap类型图片
      */
@@ -188,7 +186,6 @@ public class MyView extends View {
 
     /**
      * 提供使用类方法设置图片
-     *
      */
     @SuppressLint("NewApi")
     public void setImageResource(int src) {
@@ -198,9 +195,10 @@ public class MyView extends View {
 
     /**
      * 提供java 代码设置文办颜色方法
+     *
      * @param textColor
      */
-    public void setTextColor(int textColor){
+    public void setTextColor(int textColor) {
         this.textColor = textColor;
     }
 }

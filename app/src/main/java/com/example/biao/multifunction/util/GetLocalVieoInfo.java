@@ -21,7 +21,7 @@ public class GetLocalVieoInfo {
     public static List<VideoInfo> getVideoFromSDCard(Context context) {
         List<VideoInfo> list = new ArrayList<>();
         String[] projection = new String[]{MediaStore.Video.Media.DATA, MediaStore.Video.Media.DURATION,
-                MediaStore.Video.Media.DISPLAY_NAME,MediaStore.Video.Thumbnails.DATA};
+                MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Thumbnails.DATA};
         Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
                 projection, null, null, null);
         assert cursor != null;
@@ -39,15 +39,17 @@ public class GetLocalVieoInfo {
 
     /**
      * 获取视频缩略图
+     *
      * @param filePath 缩略图地址
      * @return 返回bitmap图片
      */
+    private static MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+
     public static Bitmap getVideoThumbnail(String filePath) {
-        Bitmap b=null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        Bitmap b = null;
         try {
             retriever.setDataSource(filePath);
-            b=retriever.getFrameAtTime();
+            b = retriever.getFrameAtTime();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
