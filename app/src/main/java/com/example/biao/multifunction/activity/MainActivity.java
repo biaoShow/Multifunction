@@ -91,6 +91,7 @@ public class MainActivity extends SlidingFragmentActivity implements View.OnClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setBackgroundDrawable(null);
         ButterKnife.bind(this);
         initTranslucentStatus();//设置状态栏为透明
         setBehindContentView(R.layout.left_menu);

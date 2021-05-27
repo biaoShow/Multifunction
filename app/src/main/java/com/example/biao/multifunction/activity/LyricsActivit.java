@@ -146,6 +146,7 @@ public class LyricsActivit extends BaseActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_lyrics_layout);
+        getWindow().setBackgroundDrawable(null);
         ButterKnife.bind(this);
 
         //沉浸效果

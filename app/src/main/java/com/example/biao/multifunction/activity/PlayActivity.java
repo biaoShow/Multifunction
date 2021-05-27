@@ -32,7 +32,7 @@ public class PlayActivity extends BaseActivity implements MediaPlayer.OnPrepared
         super.onCreate(savedInstanceState);
         Vitamio.isInitialized(getApplicationContext());
         setContentView(R.layout.playvideo_activty);
-
+        getWindow().setBackgroundDrawable(null);
 //        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
 //            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //        }
